@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(\\(Get-ChildItem -Force -Recurse | Measure-Object\\).Count; Get-Location)",
+      "PowerShell($routes = \"/login\",\"/dashboard\",\"/requests\",\"/requests/new\",\"/requests/REQ-2026-0012\",\"/requests/REQ-2026-0006\",\"/admin\",\"/admin/review\",\"/admin/budget\",\"/admin/payments\",\"/requests/NO-SUCH-ID\"; foreach \\($r in $routes\\) { try { $res = Invoke-WebRequest -Uri \"http://localhost:3000$r\" -UseBasicParsing -ErrorAction Stop; \"$\\($res.StatusCode\\)  $r\" } catch { \"$\\($_.Exception.Response.StatusCode.value__\\)  $r\" } })",
+      "mcp__1b850609-1013-4c47-a132-f50e40c26163__list_projects",
+      "mcp__1b850609-1013-4c47-a132-f50e40c26163__get_cost",
+      "mcp__1b850609-1013-4c47-a132-f50e40c26163__confirm_cost",
+      "mcp__1b850609-1013-4c47-a132-f50e40c26163__create_project",
+      "mcp__1b850609-1013-4c47-a132-f50e40c26163__apply_migration",
+      "mcp__1b850609-1013-4c47-a132-f50e40c26163__execute_sql",
+      "mcp__1b850609-1013-4c47-a132-f50e40c26163__get_advisors",
+      "mcp__1b850609-1013-4c47-a132-f50e40c26163__get_project_url",
+      "mcp__1b850609-1013-4c47-a132-f50e40c26163__get_publishable_keys",
+      "PowerShell(node scripts/create-test-users.mjs)",
+      "PowerShell(Remove-Item \"lib\\\\dummy-data.ts\" -Confirm:$false)",
+      "PowerShell(npm run build)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/login --max-time 5)",
+      "Bash(nohup npm run dev)",
+      "Bash(echo \"started pid $!\")",
+      "Bash(taskkill //F //PID 49496)",
+      "Read(//c/Users/User/AppData/Local/Temp/**)",
+      "Read(//c/Users/User/Downloads/**)",
+      "Read(//c/Users/User/Desktop/**)",
+      "Bash(mkdir -p \"/c/Users/User/Desktop/대외경조비 싸이트/public\" *)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Process -Name node -ErrorAction SilentlyContinue)",
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { \"Port 3000 in use by PID: $\\($c.OwningProcess\\)\" } else { \"Port 3000 free\" }; Get-Process -Name node -ErrorAction SilentlyContinue | Select-Object Id | Format-Table -AutoSize)"
+    ]
+  }
+}

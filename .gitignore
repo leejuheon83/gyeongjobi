@@ -1,0 +1,21 @@
+node_modules/
+.next/
+.next-broken*/
+out/
+build/
+
+.env
+.env.local
+.env.*.local
+
+*.log
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+
+# 테스트 (실제 계정 비밀번호가 포함되어 있어 저장소에 올리지 않음)
+e2e/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/

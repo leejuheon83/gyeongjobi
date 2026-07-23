@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+/* SBS 신뢰체 — 본문·UI 기본 서체 (L/R/B/XB) */
+@font-face {
+  font-family: "SBS 신뢰체";
+  src: url("/fonts/SBSTrust-Light.otf") format("opentype");
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: "SBS 신뢰체";
+  src: url("/fonts/SBSTrust-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "SBS 신뢰체";
+  src: url("/fonts/SBSTrust-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "SBS 신뢰체";
+  src: url("/fonts/SBSTrust-ExtraBold.otf") format("opentype");
+  font-weight: 800;
+  font-display: swap;
+}
+
+/* SBS 창의체 — 큰 제목·강조용 디스플레이 서체 (B/XB) */
+@font-face {
+  font-family: "SBS 창의체";
+  src: url("/fonts/SBSCreative-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "SBS 창의체";
+  src: url("/fonts/SBSCreative-ExtraBold.otf") format("opentype");
+  font-weight: 800;
+  font-display: swap;
+}
+
+@theme {
+  /* SBS CI 컬러 — 로고의 하늘색/네이비/골드를 그대로 사용 */
+  --color-brand-sky: #29abe2;
+  --color-brand-navy: #123b76;
+  --color-brand-navy-dark: #0c2a54;
+  --color-brand-gold: #f5a623;
+
+  /* 큰 제목에 쓰는 창의체 (font-title 유틸리티로 노출) */
+  --font-title:
+    "SBS 창의체", "SBS 신뢰체", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  font-family:
+    "SBS 신뢰체", "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, "Malgun Gothic", "Apple SD Gothic Neo", system-ui,
+    sans-serif;
+}

@@ -46,7 +46,7 @@ export default function LoginPage() {
               name="email"
               type="email"
               label="이메일"
-              placeholder="name@company.co.kr"
+              placeholder="name@sbs.co.kr"
               autoComplete="email"
               required
             />

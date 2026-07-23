@@ -33,6 +33,7 @@ export const env = {
     if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
       return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
     }
-    return undefined;
+    // 위 두 값이 없을 때를 대비한 운영 도메인 기본값 (도메인 변경 시 이 값을 수정)
+    return "https://sbsmcrequest.vercel.app";
   },
 };

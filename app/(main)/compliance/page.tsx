@@ -56,23 +56,19 @@ export default function ComplianceGuidePage() {
           청탁금지법 경조사 가액 한도: <span className="font-semibold">10만원</span>{" "}
           (법인·개인 구분 없이 합산 산정)
         </p>
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full min-w-max text-sm">
+        <div className="mt-4">
+          <table className="w-full table-fixed text-sm">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50 text-left">
-                <th className="px-3 py-2.5 font-medium whitespace-nowrap text-slate-600">
-                  경조사 방식
-                </th>
-                <th className="px-3 py-2.5 text-right font-medium whitespace-nowrap text-slate-600">
-                  한도
-                </th>
+                <th className="px-3 py-2.5 font-medium text-slate-600">경조사 방식</th>
+                <th className="w-28 px-3 py-2.5 text-right font-medium text-slate-600">한도</th>
               </tr>
             </thead>
             <tbody>
               {LIMIT_ROWS.map((row) => (
-                <tr key={row.method} className="border-b border-slate-100 last:border-0">
+                <tr key={row.method} className="border-b border-slate-100 last:border-0 align-top">
                   <td className="px-3 py-3 text-slate-700">{row.method}</td>
-                  <td className="px-3 py-3 text-right font-medium text-slate-900">
+                  <td className="px-3 py-3 text-right font-medium whitespace-nowrap text-slate-900">
                     {row.limit}
                   </td>
                 </tr>

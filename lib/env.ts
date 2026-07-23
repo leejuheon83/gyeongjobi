@@ -25,8 +25,14 @@ export const env = {
   get GMAIL_APP_PASSWORD() {
     return process.env.GMAIL_APP_PASSWORD;
   },
-  // 알림 이메일에 넣을 검토 화면 링크의 기준 URL (예: https://gyeongjobi.company.co.kr)
+  // 알림 이메일에 넣을 검토 화면 링크의 기준 URL.
+  // SITE_URL을 직접 지정하지 않으면, Vercel 배포 환경에서 자동 제공되는
+  // 운영 도메인(VERCEL_PROJECT_PRODUCTION_URL)을 사용한다. 둘 다 없으면 링크 없이 발송한다.
   get SITE_URL() {
-    return process.env.SITE_URL;
+    if (process.env.SITE_URL) return process.env.SITE_URL;
+    if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+      return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+    }
+    return undefined;
   },
 };

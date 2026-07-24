@@ -78,7 +78,7 @@ export default function NotificationBell({
                 <button
                   type="button"
                   onClick={onMarkAllRead}
-                  className="text-xs text-blue-600 hover:underline"
+                  className="text-xs text-brand-navy hover:underline"
                 >
                   모두 읽음 처리
                 </button>
@@ -96,11 +96,11 @@ export default function NotificationBell({
                       type="button"
                       onClick={() => onItemClick(n)}
                       className={`block w-full px-4 py-3 text-left hover:bg-slate-50 ${
-                        n.is_read ? "" : "bg-blue-50/60"
+                        n.is_read ? "" : "bg-brand-sky/10"
                       }`}
                     >
                       <div className="flex items-center gap-1.5">
-                        {!n.is_read && <span className="size-1.5 shrink-0 rounded-full bg-blue-500" />}
+                        {!n.is_read && <span className="size-1.5 shrink-0 rounded-full bg-brand-sky" />}
                         <span className="text-xs font-medium text-slate-500">
                           {NOTIFICATION_TYPE_LABEL[n.type]}
                         </span>

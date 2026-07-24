@@ -6,7 +6,7 @@ const fieldCls =
 function borderCls(error?: string) {
   return error
     ? "border-red-400 focus:border-red-500 focus:ring-red-100"
-    : "border-slate-300 focus:border-blue-500 focus:ring-blue-100";
+    : "border-slate-300 focus:border-brand-sky focus:ring-brand-sky/20";
 }
 
 function FieldWrapper({

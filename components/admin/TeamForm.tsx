@@ -121,7 +121,7 @@ export function TeamRow({
         </span>
         {editing ? (
           <input
-            className="h-8 rounded-md border border-slate-300 px-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none"
+            className="h-8 rounded-md border border-slate-300 px-2 text-sm focus:border-brand-sky focus:ring-2 focus:ring-brand-sky/20 focus:outline-none"
             value={draftName}
             onChange={(e) => setDraftName(e.target.value)}
           />

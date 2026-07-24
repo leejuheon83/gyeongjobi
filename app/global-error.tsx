@@ -18,7 +18,7 @@ export default function GlobalError({
         <button
           type="button"
           onClick={reset}
-          className="h-10 rounded-md bg-blue-600 px-4 text-sm font-medium text-white hover:bg-blue-700"
+          className="h-10 rounded-md bg-brand-navy px-4 text-sm font-medium text-white hover:bg-brand-navy-dark"
         >
           다시 시도
         </button>

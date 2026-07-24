@@ -66,7 +66,12 @@ export default async function StatisticsPage({
   const supabase = await createClient();
 
   const [{ data: departments }, { rows, error }, { data: historyData }] = await Promise.all([
-    supabase.from("departments").select("id, name").eq("dept_type", "SALES").order("id"),
+    supabase
+      .from("departments")
+      .select("id, name")
+      .eq("dept_type", "SALES")
+      .eq("is_active", true)
+      .order("id"),
     fetchReportRows(sp),
     supabase
       .from("report_downloads")

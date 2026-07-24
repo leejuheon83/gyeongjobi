@@ -21,7 +21,7 @@ const pendingColumns: Column<RequestWithNames>[] = [
     key: "request_no",
     header: "신청번호",
     render: (r) => (
-      <Link href={`/requests/${r.id}`} className="font-medium text-blue-600 hover:underline">
+      <Link href={`/requests/${r.id}`} className="font-medium text-brand-navy hover:underline">
         {r.request_no}
       </Link>
     ),
@@ -46,7 +46,7 @@ const recentColumns: Column<RequestWithNames>[] = [
     key: "request_no",
     header: "신청번호",
     render: (r) => (
-      <Link href={`/requests/${r.id}`} className="font-medium text-blue-600 hover:underline">
+      <Link href={`/requests/${r.id}`} className="font-medium text-brand-navy hover:underline">
         {r.request_no}
       </Link>
     ),
@@ -179,7 +179,7 @@ export default async function AdminDashboardPage() {
         title="검토 대기 신청"
         className="mt-6"
         action={
-          <Link href="/admin/review" className="text-sm text-blue-600 hover:underline">
+          <Link href="/admin/review" className="text-sm text-brand-navy hover:underline">
             전체 보기
           </Link>
         }
@@ -196,7 +196,7 @@ export default async function AdminDashboardPage() {
         title="최근 신청 목록"
         className="mt-6"
         action={
-          <Link href="/admin/statistics" className="text-sm text-blue-600 hover:underline">
+          <Link href="/admin/statistics" className="text-sm text-brand-navy hover:underline">
             통계 보기
           </Link>
         }

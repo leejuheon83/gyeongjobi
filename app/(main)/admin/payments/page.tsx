@@ -21,7 +21,7 @@ const pendingColumns: Column<RequestWithNames>[] = [
     key: "request_no",
     header: "신청번호",
     render: (r) => (
-      <Link href={`/requests/${r.id}`} className="font-medium text-blue-600 hover:underline">
+      <Link href={`/requests/${r.id}`} className="font-medium text-brand-navy hover:underline">
         {r.request_no}
       </Link>
     ),
@@ -64,7 +64,7 @@ const paidColumns: Column<PaidRow>[] = [
       p.request ? (
         <Link
           href={`/requests/${p.request.id}`}
-          className="font-medium text-blue-600 hover:underline"
+          className="font-medium text-brand-navy hover:underline"
         >
           {p.request.request_no}
         </Link>

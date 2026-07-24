@@ -65,7 +65,7 @@ const relatedColumns: Column<RelatedRequest>[] = [
     key: "request_no",
     header: "신청번호",
     render: (r) => (
-      <Link href={`/admin/review/${r.id}`} className="font-medium text-blue-600 hover:underline">
+      <Link href={`/admin/review/${r.id}`} className="font-medium text-brand-navy hover:underline">
         {r.request_no}
       </Link>
     ),
@@ -292,7 +292,7 @@ export default async function AdminReviewDetailPage({
             />
             <p className="mt-3 text-xs text-slate-400">
               지급 증빙 추가·수정은{" "}
-              <Link href={`/admin/payments/${request.id}/edit`} className="text-blue-600 hover:underline">
+              <Link href={`/admin/payments/${request.id}/edit`} className="text-brand-navy hover:underline">
                 지급 내역 수정
               </Link>{" "}
               화면에서 할 수 있습니다.
@@ -332,7 +332,7 @@ export default async function AdminReviewDetailPage({
                         className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
                           c.is_internal
                             ? "bg-slate-200 text-slate-600"
-                            : "bg-blue-50 text-blue-700"
+                            : "bg-brand-sky/10 text-brand-navy"
                         }`}
                       >
                         {c.is_internal ? "내부" : "공개"}
@@ -355,7 +355,7 @@ export default async function AdminReviewDetailPage({
           <ol className="space-y-4">
             {history.map((h) => (
               <li key={h.id} className="flex gap-3">
-                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-blue-500" />
+                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-brand-sky" />
                 <div>
                   <p className="text-sm font-medium text-slate-900">
                     {h.from_status ? `${STATUS_LABEL[h.from_status]} → ` : ""}

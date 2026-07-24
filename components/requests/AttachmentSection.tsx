@@ -200,7 +200,7 @@ export default function AttachmentSection({
                   href={`/api/attachments/${attachment.id}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="block truncate text-sm font-medium text-blue-600 hover:underline"
+                  className="block truncate text-sm font-medium text-brand-navy hover:underline"
                 >
                   {attachment.file_name}
                 </a>

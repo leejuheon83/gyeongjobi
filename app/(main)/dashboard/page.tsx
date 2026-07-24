@@ -20,7 +20,7 @@ const columns: Column<RequestRow>[] = [
     key: "request_no",
     header: "신청번호",
     render: (r) => (
-      <Link href={`/requests/${r.id}`} className="font-medium text-blue-600 hover:underline">
+      <Link href={`/requests/${r.id}`} className="font-medium text-brand-navy hover:underline">
         {r.request_no}
       </Link>
     ),
@@ -101,7 +101,7 @@ export default async function DashboardPage() {
         title="최근 신청 내역"
         className="mt-6"
         action={
-          <Link href="/requests" className="text-sm text-blue-600 hover:underline">
+          <Link href="/requests" className="text-sm text-brand-navy hover:underline">
             전체 보기
           </Link>
         }

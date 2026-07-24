@@ -278,7 +278,7 @@ export default function AdminEditRequestForm({
         <p className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">{serverError}</p>
       )}
 
-      <div className="flex justify-end gap-2">
+      <div className="sticky bottom-0 flex justify-end gap-2 border-t border-slate-200 bg-white/95 py-3 backdrop-blur-sm">
         <Button variant="secondary" onClick={() => router.back()} disabled={pending}>
           취소
         </Button>

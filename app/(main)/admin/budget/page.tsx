@@ -83,7 +83,7 @@ const usageColumns: Column<DeptUsage>[] = [
         <div className="flex items-center gap-2">
           <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-100">
             <div
-              className={`h-full rounded-full ${over ? "bg-red-500" : rate >= 80 ? "bg-amber-500" : "bg-blue-500"}`}
+              className={`h-full rounded-full ${over ? "bg-red-500" : rate >= 80 ? "bg-amber-500" : "bg-brand-sky"}`}
               style={{ width: `${Math.min(rate, 100)}%` }}
             />
           </div>

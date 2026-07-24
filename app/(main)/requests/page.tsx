@@ -30,7 +30,7 @@ const columns: Column<RequestRow>[] = [
     key: "request_no",
     header: "신청번호",
     render: (r) => (
-      <Link href={`/requests/${r.id}`} className="font-medium text-blue-600 hover:underline">
+      <Link href={`/requests/${r.id}`} className="font-medium text-brand-navy hover:underline">
         {r.request_no}
       </Link>
     ),

@@ -35,8 +35,12 @@ const MENU: MenuGroup[] = [
       { label: "대시보드", href: "/dashboard" },
       { label: "신규 신청", href: "/requests/new" },
       { label: "내 신청 내역", href: "/requests" },
-      { label: "김영란법 안내", href: "/compliance" },
     ],
+  },
+  {
+    title: "참고",
+    role: "SALES_USER",
+    items: [{ label: "김영란법 안내", href: "/compliance" }],
   },
   {
     title: "관리자",
@@ -48,8 +52,12 @@ const MENU: MenuGroup[] = [
       { label: "지급 관리", href: "/admin/payments" },
       { label: "부서/팀 관리", href: "/admin/departments" },
       { label: "통계 및 다운로드", href: "/admin/statistics" },
-      { label: "김영란법 안내", href: "/compliance" },
     ],
+  },
+  {
+    title: "참고",
+    role: "SUPPORT_ADMIN",
+    items: [{ label: "김영란법 안내", href: "/compliance" }],
   },
 ];
 

@@ -40,6 +40,17 @@ export default function ComplianceGuidePage() {
         description="대외경조비를 신청하기 전 아래 항목을 확인해 주세요."
       />
 
+      <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3">
+        <p className="text-sm font-semibold text-amber-900">
+          참고용 자료입니다 — 법적 효력이 있는 공식 판단 기준이 아닙니다
+        </p>
+        <p className="mt-1 text-sm text-amber-800">
+          아래 체크리스트와 한도는 사내 안내를 위한 참고 자료이며, 시스템이 이를 근거로 신청을
+          자동 승인·차단하지 않습니다. 실제 법 위반 여부·정확한 기준은 반드시 경영지원팀에
+          문의해 확인해 주세요.
+        </p>
+      </div>
+
       <Card title="신청 전 체크리스트">
         <ul className="space-y-3">
           {CHECKLIST_ITEMS.map((item) => (
@@ -78,13 +89,6 @@ export default function ComplianceGuidePage() {
         </div>
         <p className="mt-3 text-xs text-slate-500">
           위반 사례: 경조비 5만원 + 화환 10만원(X) · 경조비 7만원(X) + 화환 3만원
-        </p>
-      </Card>
-
-      <Card title="유의사항" className="mt-6 border-amber-200 bg-amber-50/50">
-        <p className="text-sm text-slate-700">
-          위 기준은 사내 안내 자료를 바탕으로 하며, 실제 법적 기준은 법령 개정에 따라 달라질 수
-          있습니다. 신청 전 정확한 기준은 경영지원팀에 문의해 주세요.
         </p>
       </Card>
     </>

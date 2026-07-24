@@ -86,7 +86,6 @@ const FIELD_LABELS: Record<string, string> = {
   team_id: "신청 팀",
   category: "경조 구분",
   target_name: "대상자명",
-  target_company: "대상자 회사/기관",
   target_position: "대상자 직위",
   relationship: "신청자와의 관계",
   client_company: "거래처명",

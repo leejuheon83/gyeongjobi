@@ -177,14 +177,6 @@ export default function RequestForm({
             error={fieldErrors.target_name}
           />
           <Input
-            id="target_company"
-            label="대상자 회사/기관"
-            requiredMark
-            value={values.target_company}
-            onChange={(e) => set("target_company", e.target.value)}
-            error={fieldErrors.target_company}
-          />
-          <Input
             id="target_position"
             label="대상자 직위"
             value={values.target_position}
@@ -402,9 +394,7 @@ export default function RequestForm({
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-500">대상자</dt>
-                <dd className="font-medium text-slate-900">
-                  {values.target_company} / {values.target_name}
-                </dd>
+                <dd className="font-medium text-slate-900">{values.target_name}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-slate-500">행사일</dt>

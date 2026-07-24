@@ -6,7 +6,6 @@ export interface RequestFormValues {
   team_id: string;
   category: string;
   target_name: string;
-  target_company: string;
   target_position: string;
   relationship: string;
   client_company: string;
@@ -26,7 +25,6 @@ export const EMPTY_VALUES: RequestFormValues = {
   team_id: "",
   category: "",
   target_name: "",
-  target_company: "",
   target_position: "",
   relationship: "",
   client_company: "",
@@ -53,7 +51,6 @@ export function toFormValues(r: RequestRow): RequestFormValues {
     team_id: r.team_id != null ? String(r.team_id) : "",
     category: r.category ?? "",
     target_name: r.target_name ?? "",
-    target_company: r.target_company ?? "",
     target_position: r.target_position ?? "",
     relationship: r.relationship ?? "",
     client_company: r.client_company ?? "",
@@ -77,7 +74,8 @@ export function toRequestFields(values: RequestFormValues) {
     team_id: values.team_id.trim() ? Number(values.team_id) : null,
     category: t(values.category),
     target_name: t(values.target_name),
-    target_company: t(values.target_company),
+    // 별도 입력을 받지 않고 거래처명을 그대로 사용한다 (두 필드가 실질적으로 중복이라 UI에서 통합)
+    target_company: t(values.client_company),
     target_position: t(values.target_position),
     relationship: t(values.relationship),
     client_company: t(values.client_company),
@@ -105,7 +103,6 @@ const SUBMIT_REQUIRED: { key: keyof RequestFormValues; label: string }[] = [
   { key: "team_id", label: "신청 팀" },
   { key: "category", label: "경조 구분" },
   { key: "target_name", label: "대상자명" },
-  { key: "target_company", label: "대상자 회사/기관" },
   { key: "relationship", label: "신청자와의 관계" },
   { key: "client_company", label: "거래처명" },
   { key: "occurrence_date", label: "경조 발생일" },

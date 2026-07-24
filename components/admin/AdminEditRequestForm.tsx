@@ -123,14 +123,6 @@ export default function AdminEditRequestForm({
             error={fieldErrors.target_name}
           />
           <Input
-            id="target_company"
-            label="대상자 회사/기관"
-            requiredMark
-            value={values.target_company}
-            onChange={(e) => set("target_company", e.target.value)}
-            error={fieldErrors.target_company}
-          />
-          <Input
             id="target_position"
             label="대상자 직위"
             value={values.target_position}

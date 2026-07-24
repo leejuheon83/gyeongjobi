@@ -155,7 +155,7 @@ export async function saveRequest(input: {
       isResubmission,
       applicantName: profile.name,
       departmentName: profile.departmentName,
-      targetSummary: [values.target_company, values.target_name].filter(Boolean).join(" / ") || "-",
+      targetSummary: [values.client_company, values.target_name].filter(Boolean).join(" / ") || "-",
       categoryLabel: categoryLabel(values.category as EventCategory),
       amount: parseAmount(values.amount),
     });

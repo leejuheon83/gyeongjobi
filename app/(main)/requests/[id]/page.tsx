@@ -137,7 +137,6 @@ export default async function RequestDetailPage({
           <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Field label="신청 팀" value={request.team?.name ?? "-"} />
             <Field label="대상자명" value={request.target_name ?? "-"} />
-            <Field label="대상자 회사/기관" value={request.target_company ?? "-"} />
             <Field label="대상자 직위" value={request.target_position ?? "-"} />
             <Field label="신청자와의 관계" value={request.relationship ?? "-"} />
             <Field label="거래처명" value={request.client_company ?? "-"} />

@@ -5,31 +5,9 @@ import DepartmentBudgetOverview, {
 } from "@/components/requests/DepartmentBudgetOverview";
 import RequestForm from "@/components/requests/RequestForm";
 import { getProfile } from "@/lib/auth";
-import type { RequestFormValues } from "@/lib/request-form";
+import { toFormValues } from "@/lib/request-form";
 import { createClient } from "@/lib/supabase/server";
 import type { AttachmentRow, RequestRow, TeamRow } from "@/lib/types";
-
-function toFormValues(r: RequestRow): RequestFormValues {
-  return {
-    team_id: r.team_id != null ? String(r.team_id) : "",
-    category: r.category ?? "",
-    target_name: r.target_name ?? "",
-    target_company: r.target_company ?? "",
-    target_position: r.target_position ?? "",
-    relationship: r.relationship ?? "",
-    client_company: r.client_company ?? "",
-    sales_rep_name: r.sales_rep_name ?? "",
-    occurrence_date: r.occurrence_date ?? "",
-    event_date: r.event_date ?? "",
-    location: r.location ?? "",
-    reason: r.reason ?? "",
-    business_relevance: r.business_relevance ?? "",
-    amount: r.requested_amount != null ? r.requested_amount.toLocaleString("ko-KR") : "",
-    payment_method: r.payment_method ?? "",
-    desired_payment_date: r.desired_payment_date ?? "",
-    special_request: r.special_request ?? "",
-  };
-}
 
 export default async function EditRequestPage({
   params,
@@ -51,12 +29,14 @@ export default async function EditRequestPage({
   if (!data) notFound();
 
   const request = data as RequestRow & { attachments: AttachmentRow[] };
-  const editableStatuses = ["DRAFT", "REVISION_REQUESTED"];
+  const editableStatuses = ["DRAFT", "SUBMITTED", "REVIEWING", "REVISION_REQUESTED", "RESUBMITTED"];
   if (!editableStatuses.includes(request.status) || request.applicant_id !== profile.id) {
     redirect(`/requests/${id}`);
   }
 
   const isRevision = request.status === "REVISION_REQUESTED";
+  // 이미 제출·검토중·재제출 상태 — 상태 전이 없이 내용만 고치는 인플라이트 수정
+  const inFlightEdit = ["SUBMITTED", "REVIEWING", "RESUBMITTED"].includes(request.status);
   let revisionNote: string | null = null;
   if (isRevision) {
     const { data: noteRows } = await supabase
@@ -88,11 +68,13 @@ export default async function EditRequestPage({
   return (
     <>
       <PageHeader
-        title={isRevision ? "보완 후 재신청" : "임시저장 신청서 작성"}
+        title={isRevision ? "보완 후 재신청" : inFlightEdit ? "신청 내용 수정" : "임시저장 신청서 작성"}
         description={
           isRevision
             ? `${request.request_no} · 보완 요청된 신청서를 수정하고 재신청합니다.`
-            : `${request.request_no} · 임시저장 상태의 신청서를 이어서 작성합니다.`
+            : inFlightEdit
+              ? `${request.request_no} · 접수된 신청서 내용을 수정합니다. 처리 상태는 바뀌지 않습니다.`
+              : `${request.request_no} · 임시저장 상태의 신청서를 이어서 작성합니다.`
         }
       />
       <div className="mb-6 max-w-2xl">
@@ -108,7 +90,7 @@ export default async function EditRequestPage({
         initial={toFormValues(request)}
         savedNotice={saved === "1"}
         attachments={attachments}
-        submitLabel={isRevision ? "재신청" : "제출"}
+        submitLabel={isRevision ? "재신청" : inFlightEdit ? "저장" : "제출"}
         draftLabel={isRevision ? "저장" : "임시저장"}
         revisionNote={
           isRevision
@@ -117,6 +99,7 @@ export default async function EditRequestPage({
         }
         teams={teams}
         divisionName={profile.departmentName}
+        inFlightEdit={inFlightEdit}
       />
     </>
   );

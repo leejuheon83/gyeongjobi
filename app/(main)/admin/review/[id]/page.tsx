@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageHeader from "@/components/layout/PageHeader";
 import AdminCommentForm from "@/components/admin/AdminCommentForm";
+import AdminDeleteRequestButton from "@/components/admin/AdminDeleteRequestButton";
 import ReviewActions from "@/components/admin/ReviewActions";
 import AttachmentSection from "@/components/requests/AttachmentSection";
 import Button from "@/components/ui/Button";
@@ -174,6 +175,9 @@ export default async function AdminReviewDetailPage({
           <div className="flex items-center gap-2">
             <Button variant="secondary" href="/admin/review">
               목록으로
+            </Button>
+            <Button variant="secondary" href={`/admin/review/${request.id}/edit`}>
+              신청 내용 수정
             </Button>
             <StatusBadge status={request.status} />
           </div>
@@ -372,6 +376,15 @@ export default async function AdminReviewDetailPage({
             ))}
           </ol>
         </Card>
+
+        {request.status === "PAID" ? (
+          <p className="text-xs text-slate-400">
+            지급완료된 신청서는 완전 삭제할 수 없습니다. 삭제가 필요하면 먼저 신청 취소를
+            이용해 주세요.
+          </p>
+        ) : (
+          <AdminDeleteRequestButton requestId={request.id} requestNo={request.request_no} />
+        )}
       </div>
     </>
   );

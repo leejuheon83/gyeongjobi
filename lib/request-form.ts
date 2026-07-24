@@ -1,5 +1,7 @@
 // 신청서 폼 값과 검증 (클라이언트·서버 공용)
 
+import type { RequestRow } from "@/lib/types";
+
 export interface RequestFormValues {
   team_id: string;
   category: string;
@@ -43,6 +45,53 @@ export const EMPTY_VALUES: RequestFormValues = {
 export function parseAmount(value: string): number | null {
   const digits = value.replace(/[^0-9]/g, "");
   return digits ? parseInt(digits, 10) : null;
+}
+
+// requests 행을 폼 값으로 변환한다 (신청자 수정, 관리자 수정 양쪽에서 공용)
+export function toFormValues(r: RequestRow): RequestFormValues {
+  return {
+    team_id: r.team_id != null ? String(r.team_id) : "",
+    category: r.category ?? "",
+    target_name: r.target_name ?? "",
+    target_company: r.target_company ?? "",
+    target_position: r.target_position ?? "",
+    relationship: r.relationship ?? "",
+    client_company: r.client_company ?? "",
+    sales_rep_name: r.sales_rep_name ?? "",
+    occurrence_date: r.occurrence_date ?? "",
+    event_date: r.event_date ?? "",
+    location: r.location ?? "",
+    reason: r.reason ?? "",
+    business_relevance: r.business_relevance ?? "",
+    amount: r.requested_amount != null ? r.requested_amount.toLocaleString("ko-KR") : "",
+    payment_method: r.payment_method ?? "",
+    desired_payment_date: r.desired_payment_date ?? "",
+    special_request: r.special_request ?? "",
+  };
+}
+
+// 폼 값을 requests 테이블 컬럼 형태로 변환한다 (신청자 작성, 관리자 수정 양쪽에서 공용)
+export function toRequestFields(values: RequestFormValues) {
+  const t = (s: string) => (s.trim() ? s.trim() : null);
+  return {
+    team_id: values.team_id.trim() ? Number(values.team_id) : null,
+    category: t(values.category),
+    target_name: t(values.target_name),
+    target_company: t(values.target_company),
+    target_position: t(values.target_position),
+    relationship: t(values.relationship),
+    client_company: t(values.client_company),
+    sales_rep_name: t(values.sales_rep_name),
+    occurrence_date: t(values.occurrence_date),
+    event_date: t(values.event_date),
+    location: t(values.location),
+    reason: t(values.reason),
+    business_relevance: t(values.business_relevance),
+    requested_amount: parseAmount(values.amount),
+    payment_method: t(values.payment_method),
+    desired_payment_date: t(values.desired_payment_date),
+    special_request: t(values.special_request),
+  };
 }
 
 export function formatAmountInput(value: string): string {

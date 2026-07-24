@@ -5,6 +5,7 @@ import { getProfile } from "@/lib/auth";
 import { sendNewRequestEmail } from "@/lib/email";
 import {
   parseAmount,
+  toRequestFields,
   validateRequest,
   type RequestFormValues,
 } from "@/lib/request-form";
@@ -14,29 +15,6 @@ import { categoryLabel, type EventCategory } from "@/lib/types";
 export interface SaveRequestResult {
   error?: string;
   fieldErrors?: Partial<Record<keyof RequestFormValues, string>>;
-}
-
-function toRequestFields(values: RequestFormValues) {
-  const t = (s: string) => (s.trim() ? s.trim() : null);
-  return {
-    team_id: values.team_id.trim() ? Number(values.team_id) : null,
-    category: t(values.category),
-    target_name: t(values.target_name),
-    target_company: t(values.target_company),
-    target_position: t(values.target_position),
-    relationship: t(values.relationship),
-    client_company: t(values.client_company),
-    sales_rep_name: t(values.sales_rep_name),
-    occurrence_date: t(values.occurrence_date),
-    event_date: t(values.event_date),
-    location: t(values.location),
-    reason: t(values.reason),
-    business_relevance: t(values.business_relevance),
-    requested_amount: parseAmount(values.amount),
-    payment_method: t(values.payment_method),
-    desired_payment_date: t(values.desired_payment_date),
-    special_request: t(values.special_request),
-  };
 }
 
 // 작성 중 첨부파일을 바로 올릴 수 있도록, 리다이렉트 없이 임시저장 draft를 만들고 id를 돌려준다.
@@ -93,6 +71,7 @@ export async function saveRequest(input: {
   let requestId = id;
   let requestNo: string | undefined;
   let isResubmission = false;
+  let inFlightNoTransition = false;
 
   if (id) {
     const { data: existing } = await supabase
@@ -103,7 +82,8 @@ export async function saveRequest(input: {
     if (!existing || existing.applicant_id !== profile.id) {
       return { error: "신청서를 찾을 수 없습니다." };
     }
-    if (!["DRAFT", "REVISION_REQUESTED"].includes(existing.status)) {
+    const editableStatuses = ["DRAFT", "SUBMITTED", "REVIEWING", "REVISION_REQUESTED", "RESUBMITTED"];
+    if (!editableStatuses.includes(existing.status)) {
       return { error: "이 상태에서는 수정할 수 없습니다." };
     }
     // 동시 수정 충돌 방지: 화면을 연 이후 다른 곳(다른 탭 등)에서 먼저 저장했다면 덮어쓰지 않는다
@@ -113,14 +93,19 @@ export async function saveRequest(input: {
       };
     }
 
-    // 임시저장(내용만 저장)은 상태 유지, 제출은 상태에 따라 SUBMITTED/RESUBMITTED로 전이
-    isResubmission = existing.status === "REVISION_REQUESTED";
+    // 이미 제출·검토중·재제출 상태인 건은 "제출"을 눌러도 상태 전이 없이 내용만 저장한다
+    // (심사가 최종 결정되기 전까지 신청자가 계속 고칠 수 있게 하기 위함)
+    inFlightNoTransition =
+      mode === "submit" && ["SUBMITTED", "REVIEWING", "RESUBMITTED"].includes(existing.status);
+    isResubmission = !inFlightNoTransition && existing.status === "REVISION_REQUESTED";
     const row =
       mode === "submit"
-        ? {
-            ...fields,
-            status: isResubmission ? ("RESUBMITTED" as const) : ("SUBMITTED" as const),
-          }
+        ? inFlightNoTransition
+          ? fields
+          : {
+              ...fields,
+              status: isResubmission ? ("RESUBMITTED" as const) : ("SUBMITTED" as const),
+            }
         : fields;
 
     let query = supabase.from("requests").update(row).eq("id", id).eq("applicant_id", profile.id);
@@ -157,7 +142,7 @@ export async function saveRequest(input: {
     requestNo = data.request_no;
   }
 
-  if (mode === "submit" && requestId && requestNo) {
+  if (mode === "submit" && !inFlightNoTransition && requestId && requestNo) {
     const { data: admins } = await supabase
       .from("users")
       .select("email")

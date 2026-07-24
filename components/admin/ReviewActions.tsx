@@ -48,6 +48,12 @@ const ACTION_META: Record<
     confirmLabel: "반려",
     variant: "danger",
   },
+  CANCEL: {
+    label: "신청 취소",
+    title: "이 신청서를 취소할까요?",
+    confirmLabel: "취소 처리",
+    variant: "danger",
+  },
 };
 
 export default function ReviewActions({
@@ -75,6 +81,9 @@ export default function ReviewActions({
         ? ["APPROVE", "REQUEST_REVISION", "REJECT"]
         : [];
 
+  // 취소는 이미 취소된 건을 제외한 모든 상태에서 가능 (지급완료 건 포함)
+  const canCancel = status !== "CANCELLED";
+
   function open(a: ReviewAction) {
     setError(null);
     setComment("");
@@ -96,6 +105,7 @@ export default function ReviewActions({
     }
     if (a === "REQUEST_REVISION" && !comment.trim()) return "보완 요청 내용을 입력해 주세요.";
     if (a === "REJECT" && !comment.trim()) return "반려 사유를 입력해 주세요.";
+    if (a === "CANCEL" && !comment.trim()) return "취소 사유를 입력해 주세요.";
     return null;
   }
 
@@ -131,32 +141,44 @@ export default function ReviewActions({
     parseAmount(approvedAmount) !== null &&
     parseAmount(approvedAmount) !== requestedAmount;
 
-  if (available.length === 0) {
-    return (
-      <p className="text-sm text-slate-500">
-        현재 상태에서는 처리할 수 있는 작업이 없습니다.
-      </p>
-    );
-  }
-
   return (
     <>
-      <div className="flex flex-wrap gap-2">
-        {available.map((a) => (
-          <Button
-            key={a}
-            variant={ACTION_META[a].variant}
-            onClick={() => open(a)}
-            disabled={pending}
-          >
-            {ACTION_META[a].label}
-          </Button>
-        ))}
-      </div>
+      {available.length === 0 && !canCancel && (
+        <p className="text-sm text-slate-500">
+          현재 상태에서는 처리할 수 있는 작업이 없습니다.
+        </p>
+      )}
+
+      {available.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {available.map((a) => (
+            <Button
+              key={a}
+              variant={ACTION_META[a].variant}
+              onClick={() => open(a)}
+              disabled={pending}
+            >
+              {ACTION_META[a].label}
+            </Button>
+          ))}
+        </div>
+      )}
       {(status === "SUBMITTED" || status === "RESUBMITTED") && (
         <p className="mt-2 text-xs text-slate-400">
           승인·보완 요청·반려는 검토 시작 후 진행할 수 있습니다.
         </p>
+      )}
+
+      {canCancel && (
+        <div className={available.length > 0 ? "mt-4 border-t border-slate-100 pt-4" : ""}>
+          <Button variant="secondary" onClick={() => open("CANCEL")} disabled={pending}>
+            신청 취소
+          </Button>
+          <p className="mt-2 text-xs text-slate-400">
+            신청서를 취소 상태로 변경합니다. 이력은 남고 되돌릴 수 있습니다.
+            {status === "PAID" && " 지급완료 건을 취소하면 예산 실제사용액에서도 제외됩니다."}
+          </p>
+        </div>
       )}
 
       {action && (
@@ -239,6 +261,25 @@ export default function ReviewActions({
                 <p className="text-sm text-slate-500">
                   검토중 상태로 변경되며, 이후 승인·보완 요청·반려를 진행할 수 있습니다.
                 </p>
+              )}
+
+              {action === "CANCEL" && (
+                <>
+                  {status === "PAID" && (
+                    <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                      이미 지급완료된 신청서입니다. 취소하면 예산 실제사용액 집계에서
+                      제외됩니다.
+                    </p>
+                  )}
+                  <Textarea
+                    id="comment"
+                    label="취소 사유"
+                    requiredMark
+                    placeholder="취소 사유를 입력해 주세요. (처리 이력에 기록됩니다)"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                  />
+                </>
               )}
 
               {error && (

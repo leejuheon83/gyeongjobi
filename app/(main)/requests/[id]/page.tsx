@@ -84,6 +84,8 @@ export default async function RequestDetailPage({
     profile?.id === request.applicant_id && profile?.role === "SALES_USER";
   const isOwnDraft = isOwner && request.status === "DRAFT";
   const canRevise = isOwner && request.status === "REVISION_REQUESTED";
+  const canInFlightEdit =
+    isOwner && ["SUBMITTED", "REVIEWING", "RESUBMITTED"].includes(request.status);
   const canCancel =
     isOwner &&
     ["DRAFT", "SUBMITTED", "REVIEWING", "REVISION_REQUESTED", "RESUBMITTED"].includes(
@@ -105,6 +107,11 @@ export default async function RequestDetailPage({
             {isOwnDraft && <Button href={`/requests/${request.id}/edit`}>이어서 작성</Button>}
             {canRevise && (
               <Button href={`/requests/${request.id}/edit`}>수정 후 재신청</Button>
+            )}
+            {canInFlightEdit && (
+              <Button variant="secondary" href={`/requests/${request.id}/edit`}>
+                내용 수정
+              </Button>
             )}
             {canCancel && <CancelButton requestId={request.id} />}
             <StatusBadge status={request.status} />

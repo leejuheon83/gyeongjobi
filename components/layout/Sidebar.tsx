@@ -46,6 +46,7 @@ const MENU: MenuGroup[] = [
       { label: "신청 검토", href: "/admin/review" },
       { label: "예산 관리", href: "/admin/budget" },
       { label: "지급 관리", href: "/admin/payments" },
+      { label: "부서/팀 관리", href: "/admin/departments" },
       { label: "통계 및 다운로드", href: "/admin/statistics" },
       { label: "김영란법 안내", href: "/compliance" },
     ],

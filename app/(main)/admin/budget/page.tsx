@@ -181,8 +181,6 @@ export default async function BudgetPage({
   const remaining = totalBudget - committedTotal;
   const overBudgetDepts = usage.filter((u) => u.committed_amount > u.budget_amount);
 
-  const findDept = (code: string) => usage.find((u) => u.department_code === code);
-
   let adjustments: AdjustmentRow[] = [];
   if (annual) {
     const { data } = await supabase
@@ -257,12 +255,12 @@ export default async function BudgetPage({
       <Card title="예산 편성 / 조정" className="mt-6">
         <BudgetForm
           year={year}
-          initial={{
-            sales1: findDept("SALES1")?.budget_amount ?? 0,
-            sales2: findDept("SALES2")?.budget_amount ?? 0,
-            sales3: findDept("SALES3")?.budget_amount ?? 0,
-            common: annual?.common_amount ?? 0,
-          }}
+          departments={usage.map((u) => ({
+            id: u.department_id,
+            name: u.department_name,
+            amount: u.budget_amount,
+          }))}
+          common={annual?.common_amount ?? 0}
         />
       </Card>
 

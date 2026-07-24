@@ -8,34 +8,39 @@ import Input, { Textarea } from "@/components/ui/Input";
 import { formatKRW } from "@/lib/format";
 import { formatAmountInput, parseAmount } from "@/lib/request-form";
 
-interface BudgetFormProps {
-  year: number;
-  initial: { sales1: number; sales2: number; sales3: number; common: number };
+export interface BudgetDept {
+  id: number;
+  name: string;
+  amount: number;
 }
 
-export default function BudgetForm({ year, initial }: BudgetFormProps) {
+interface BudgetFormProps {
+  year: number;
+  departments: BudgetDept[];
+  common: number;
+}
+
+export default function BudgetForm({ year, departments, common: initialCommon }: BudgetFormProps) {
   const router = useRouter();
-  const [sales1, setSales1] = useState(initial.sales1.toLocaleString("ko-KR"));
-  const [sales2, setSales2] = useState(initial.sales2.toLocaleString("ko-KR"));
-  const [sales3, setSales3] = useState(initial.sales3.toLocaleString("ko-KR"));
-  const [common, setCommon] = useState(initial.common.toLocaleString("ko-KR"));
+  const [amounts, setAmounts] = useState<Record<number, string>>(() =>
+    Object.fromEntries(departments.map((d) => [d.id, d.amount.toLocaleString("ko-KR")])),
+  );
+  const [common, setCommon] = useState(initialCommon.toLocaleString("ko-KR"));
   const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  const values = {
-    sales1: parseAmount(sales1) ?? 0,
-    sales2: parseAmount(sales2) ?? 0,
-    sales3: parseAmount(sales3) ?? 0,
-    common: parseAmount(common) ?? 0,
-  };
-  const total = values.sales1 + values.sales2 + values.sales3 + values.common;
+  const parsedCommon = parseAmount(common) ?? 0;
+  const allocations = departments.map((d) => ({
+    departmentId: d.id,
+    amount: parseAmount(amounts[d.id] ?? "") ?? 0,
+    initial: d.amount,
+  }));
+  const total = allocations.reduce((s, a) => s + a.amount, 0) + parsedCommon;
   const changed =
-    values.sales1 !== initial.sales1 ||
-    values.sales2 !== initial.sales2 ||
-    values.sales3 !== initial.sales3 ||
-    values.common !== initial.common;
+    parsedCommon !== initialCommon ||
+    allocations.some((a) => a.amount !== a.initial);
 
   function onSubmit() {
     if (changed && !reason.trim()) {
@@ -45,7 +50,12 @@ export default function BudgetForm({ year, initial }: BudgetFormProps) {
     setError(null);
     setNotice(null);
     startTransition(async () => {
-      const result = await updateAnnualBudget({ year, ...values, reason });
+      const result = await updateAnnualBudget({
+        year,
+        allocations: allocations.map((a) => ({ departmentId: a.departmentId, amount: a.amount })),
+        common: parsedCommon,
+        reason,
+      });
       if (result.error) {
         setError(result.error);
       } else {
@@ -59,27 +69,18 @@ export default function BudgetForm({ year, initial }: BudgetFormProps) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Input
-          id="sales1"
-          label="영업1국 예산 (원)"
-          inputMode="numeric"
-          value={sales1}
-          onChange={(e) => setSales1(formatAmountInput(e.target.value))}
-        />
-        <Input
-          id="sales2"
-          label="영업2국 예산 (원)"
-          inputMode="numeric"
-          value={sales2}
-          onChange={(e) => setSales2(formatAmountInput(e.target.value))}
-        />
-        <Input
-          id="sales3"
-          label="광고기획국 예산 (원)"
-          inputMode="numeric"
-          value={sales3}
-          onChange={(e) => setSales3(formatAmountInput(e.target.value))}
-        />
+        {departments.map((d) => (
+          <Input
+            key={d.id}
+            id={`dept_${d.id}`}
+            label={`${d.name} 예산 (원)`}
+            inputMode="numeric"
+            value={amounts[d.id] ?? ""}
+            onChange={(e) =>
+              setAmounts((prev) => ({ ...prev, [d.id]: formatAmountInput(e.target.value) }))
+            }
+          />
+        ))}
         <Input
           id="common"
           label="공통 예산 (원)"

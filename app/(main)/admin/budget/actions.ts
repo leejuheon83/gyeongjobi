@@ -5,9 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export interface UpdateBudgetInput {
   year: number;
-  sales1: number;
-  sales2: number;
-  sales3: number;
+  allocations: { departmentId: number; amount: number }[];
   common: number;
   reason: string;
 }
@@ -23,9 +21,8 @@ export async function updateAnnualBudget(
   const supabase = await createClient();
   const { error } = await supabase.rpc("update_annual_budget", {
     p_year: input.year,
-    p_sales1_amount: input.sales1,
-    p_sales2_amount: input.sales2,
-    p_sales3_amount: input.sales3,
+    p_department_ids: input.allocations.map((a) => a.departmentId),
+    p_amounts: input.allocations.map((a) => a.amount),
     p_common_amount: input.common,
     p_reason: input.reason,
   });

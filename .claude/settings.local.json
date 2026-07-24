@@ -25,7 +25,11 @@
       "Bash(mkdir -p \"/c/Users/User/Desktop/대외경조비 싸이트/public\" *)",
       "PowerShell(Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue)",
       "PowerShell(Get-Process -Name node -ErrorAction SilentlyContinue)",
-      "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { \"Port 3000 in use by PID: $\\($c.OwningProcess\\)\" } else { \"Port 3000 free\" }; Get-Process -Name node -ErrorAction SilentlyContinue | Select-Object Id | Format-Table -AutoSize)"
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { \"Port 3000 in use by PID: $\\($c.OwningProcess\\)\" } else { \"Port 3000 free\" }; Get-Process -Name node -ErrorAction SilentlyContinue | Select-Object Id | Format-Table -AutoSize)",
+      "Bash(grep -v \"@/\\\\|react\\\\|next/\")",
+      "Bash(where fonttools *)",
+      "Bash(where woff2_compress)",
+      "Bash(python -c \"import fontTools\")"
     ]
   }
 }

@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { createDraftForAttachment, saveRequest } from "@/app/(main)/requests/actions";
 import AttachmentSection from "@/components/requests/AttachmentSection";
+import type { TeamBudgetOverviewRow } from "@/components/requests/TeamBudgetOverview";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Input, { Select, Textarea } from "@/components/ui/Input";
+import { formatKRW } from "@/lib/format";
 import {
   EMPTY_VALUES,
   formatAmountInput,
@@ -35,6 +37,7 @@ interface RequestFormProps {
   draftLabel?: string;
   revisionNote?: string;
   teams: TeamRow[];
+  teamBudgets?: TeamBudgetOverviewRow[];
   divisionName: string;
   // true면 임시저장 버튼을 숨기고 "제출 후 수정 불가" 경고도 표시하지 않는다.
   // 이미 제출·검토중·재제출 상태인 신청서를 상태 변경 없이 내용만 저장하는 경우에 사용.
@@ -57,11 +60,13 @@ export default function RequestForm({
   draftLabel = "임시저장",
   revisionNote,
   teams,
+  teamBudgets = [],
   divisionName,
   inFlightEdit = false,
 }: RequestFormProps) {
   const router = useRouter();
   const [values, setValues] = useState<RequestFormValues>(initial ?? EMPTY_VALUES);
+  const selectedTeamBudget = teamBudgets.find((t) => String(t.team_id) === values.team_id);
   const [currentRequestId, setCurrentRequestId] = useState<string | undefined>(requestId);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -164,6 +169,19 @@ export default function RequestForm({
             ))}
           </Select>
         </div>
+        {selectedTeamBudget && (
+          <p className="mt-3 text-xs text-slate-500">
+            {selectedTeamBudget.team_name} 배분 예산 {formatKRW(selectedTeamBudget.budget_amount)} ·
+            사용 예정 {formatKRW(selectedTeamBudget.committed_amount)} ·{" "}
+            <span
+              className={
+                selectedTeamBudget.remaining_amount < 0 ? "font-medium text-red-600" : "font-medium"
+              }
+            >
+              잔액 {formatKRW(selectedTeamBudget.remaining_amount)}
+            </span>
+          </p>
+        )}
       </Card>
 
       <Card title="대상자 정보">

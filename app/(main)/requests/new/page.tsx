@@ -4,6 +4,7 @@ import DepartmentBudgetOverview, {
   type DepartmentBudgetOverviewRow,
 } from "@/components/requests/DepartmentBudgetOverview";
 import RequestForm from "@/components/requests/RequestForm";
+import type { TeamBudgetOverviewRow } from "@/components/requests/TeamBudgetOverview";
 import { getProfile } from "@/lib/auth";
 import { EMPTY_VALUES } from "@/lib/request-form";
 import { createClient } from "@/lib/supabase/server";
@@ -15,7 +16,7 @@ export default async function NewRequestPage() {
 
   const supabase = await createClient();
   const currentYear = new Date().getFullYear();
-  const [{ data: budgetRows }, { data: teamRows }] = await Promise.all([
+  const [{ data: budgetRows }, { data: teamRows }, { data: teamBudgetRows }] = await Promise.all([
     supabase.rpc("department_budget_overview", { p_year: currentYear }),
     supabase
       .from("teams")
@@ -23,6 +24,7 @@ export default async function NewRequestPage() {
       .eq("department_id", profile.departmentId)
       .eq("is_active", true)
       .order("sort_order"),
+    supabase.rpc("team_budget_overview", { p_year: currentYear }),
   ]);
   const teams = (teamRows ?? []) as TeamRow[];
 
@@ -39,7 +41,12 @@ export default async function NewRequestPage() {
           myDepartmentId={profile.departmentId}
         />
       </div>
-      <RequestForm initial={EMPTY_VALUES} teams={teams} divisionName={profile.departmentName} />
+      <RequestForm
+        initial={EMPTY_VALUES}
+        teams={teams}
+        teamBudgets={(teamBudgetRows ?? []) as TeamBudgetOverviewRow[]}
+        divisionName={profile.departmentName}
+      />
     </>
   );
 }

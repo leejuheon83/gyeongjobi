@@ -3,9 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { updateRequestByAdmin } from "@/app/(main)/admin/review/actions";
+import type { TeamBudgetOverviewRow } from "@/components/requests/TeamBudgetOverview";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Input, { Select, Textarea } from "@/components/ui/Input";
+import { formatKRW } from "@/lib/format";
 import { formatAmountInput, validateRequest, type RequestFormValues } from "@/lib/request-form";
 import { useEscapeKey } from "@/lib/use-escape-key";
 import { CATEGORY_LABEL, PAYMENT_METHOD_LABEL, type EventCategory, type PaymentMethod, type TeamRow } from "@/lib/types";
@@ -17,6 +19,7 @@ interface AdminEditRequestFormProps {
   updatedAt: string;
   initial: RequestFormValues;
   teams: TeamRow[];
+  teamBudgets?: TeamBudgetOverviewRow[];
   divisionName: string;
   status: string;
 }
@@ -31,11 +34,13 @@ export default function AdminEditRequestForm({
   updatedAt,
   initial,
   teams,
+  teamBudgets = [],
   divisionName,
   status,
 }: AdminEditRequestFormProps) {
   const router = useRouter();
   const [values, setValues] = useState<RequestFormValues>(initial);
+  const selectedTeamBudget = teamBudgets.find((t) => String(t.team_id) === values.team_id);
   const [editReason, setEditReason] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -110,6 +115,19 @@ export default function AdminEditRequestForm({
             ))}
           </Select>
         </div>
+        {selectedTeamBudget && (
+          <p className="mt-3 text-xs text-slate-500">
+            {selectedTeamBudget.team_name} 배분 예산 {formatKRW(selectedTeamBudget.budget_amount)} ·
+            사용 예정 {formatKRW(selectedTeamBudget.committed_amount)} ·{" "}
+            <span
+              className={
+                selectedTeamBudget.remaining_amount < 0 ? "font-medium text-red-600" : "font-medium"
+              }
+            >
+              잔액 {formatKRW(selectedTeamBudget.remaining_amount)}
+            </span>
+          </p>
+        )}
       </Card>
 
       <Card title="대상자 정보">

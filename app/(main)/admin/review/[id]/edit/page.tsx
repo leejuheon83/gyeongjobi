@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import AdminEditRequestForm from "@/components/admin/AdminEditRequestForm";
 import PageHeader from "@/components/layout/PageHeader";
+import type { TeamBudgetOverviewRow } from "@/components/requests/TeamBudgetOverview";
 import Button from "@/components/ui/Button";
 import { toFormValues } from "@/lib/request-form";
 import { createClient } from "@/lib/supabase/server";
@@ -23,12 +24,16 @@ export default async function AdminEditRequestPage({
 
   const request = data as RequestRow & { department: { name: string } | null };
 
-  const { data: teamRows } = await supabase
-    .from("teams")
-    .select("id, department_id, code, name, sort_order")
-    .eq("department_id", request.department_id)
-    .eq("is_active", true)
-    .order("sort_order");
+  const currentYear = new Date().getFullYear();
+  const [{ data: teamRows }, { data: teamBudgetRows }] = await Promise.all([
+    supabase
+      .from("teams")
+      .select("id, department_id, code, name, sort_order")
+      .eq("department_id", request.department_id)
+      .eq("is_active", true)
+      .order("sort_order"),
+    supabase.rpc("team_budget_overview", { p_year: currentYear }),
+  ]);
   const teams = (teamRows ?? []) as TeamRow[];
 
   return (
@@ -47,6 +52,7 @@ export default async function AdminEditRequestPage({
         updatedAt={request.updated_at}
         initial={toFormValues(request)}
         teams={teams}
+        teamBudgets={(teamBudgetRows ?? []) as TeamBudgetOverviewRow[]}
         divisionName={request.department?.name ?? "-"}
         status={request.status}
       />

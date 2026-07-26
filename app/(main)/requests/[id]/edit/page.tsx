@@ -4,6 +4,7 @@ import DepartmentBudgetOverview, {
   type DepartmentBudgetOverviewRow,
 } from "@/components/requests/DepartmentBudgetOverview";
 import RequestForm from "@/components/requests/RequestForm";
+import type { TeamBudgetOverviewRow } from "@/components/requests/TeamBudgetOverview";
 import { getProfile } from "@/lib/auth";
 import { toFormValues } from "@/lib/request-form";
 import { createClient } from "@/lib/supabase/server";
@@ -54,7 +55,7 @@ export default async function EditRequestPage({
   );
 
   const currentYear = new Date().getFullYear();
-  const [{ data: budgetRows }, { data: teamRows }] = await Promise.all([
+  const [{ data: budgetRows }, { data: teamRows }, { data: teamBudgetRows }] = await Promise.all([
     supabase.rpc("department_budget_overview", { p_year: currentYear }),
     supabase
       .from("teams")
@@ -62,6 +63,7 @@ export default async function EditRequestPage({
       .eq("department_id", profile.departmentId)
       .eq("is_active", true)
       .order("sort_order"),
+    supabase.rpc("team_budget_overview", { p_year: currentYear }),
   ]);
   const teams = (teamRows ?? []) as TeamRow[];
 
@@ -98,6 +100,7 @@ export default async function EditRequestPage({
             : undefined
         }
         teams={teams}
+        teamBudgets={(teamBudgetRows ?? []) as TeamBudgetOverviewRow[]}
         divisionName={profile.departmentName}
         inFlightEdit={inFlightEdit}
       />

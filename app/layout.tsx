@@ -1,9 +1,17 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "대외경조비 관리시스템",
   description: "대외경조비 신청 및 관리 사내 시스템",
+  appleWebApp: {
+    title: "대외경조비",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#123b76",
 };
 
 export default function RootLayout({

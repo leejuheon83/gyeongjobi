@@ -36,35 +36,35 @@ export default async function EditRequestPage({
   const isRevision = request.status === "REVISION_REQUESTED";
   // 이미 제출·검토중·재제출 상태 — 상태 전이 없이 내용만 고치는 인플라이트 수정
   const inFlightEdit = ["SUBMITTED", "REVIEWING", "RESUBMITTED"].includes(request.status);
-  let revisionNote: string | null = null;
-  if (isRevision) {
-    const { data: noteRows } = await supabase
-      .from("request_status_history")
-      .select("note")
-      .eq("request_id", id)
-      .eq("to_status", "REVISION_REQUESTED")
-      .order("id", { ascending: false })
-      .limit(1);
-    revisionNote = noteRows?.[0]?.note ?? null;
-  }
 
   const attachments = [...request.attachments].sort((a, b) =>
     a.created_at.localeCompare(b.created_at),
   );
 
   const currentYear = new Date().getFullYear();
-  const [{ data: budgetRows }, { data: teamRows }, { data: teamBudgetRows }] = await Promise.all([
-    supabase.rpc("department_budget_overview", { p_year: currentYear }),
-    supabase
-      .from("teams")
-      .select("id, department_id, code, name, sort_order")
-      .eq("department_id", profile.departmentId)
-      .eq("is_active", true)
-      .order("sort_order"),
-    supabase.rpc("team_budget_overview", { p_year: currentYear }),
-  ]);
+  const [{ data: budgetRows }, { data: teamRows }, { data: teamBudgetRows }, { data: noteRows }] =
+    await Promise.all([
+      supabase.rpc("department_budget_overview", { p_year: currentYear }),
+      supabase
+        .from("teams")
+        .select("id, department_id, code, name, sort_order")
+        .eq("department_id", profile.departmentId)
+        .eq("is_active", true)
+        .order("sort_order"),
+      supabase.rpc("team_budget_overview", { p_year: currentYear }),
+      isRevision
+        ? supabase
+            .from("request_status_history")
+            .select("note")
+            .eq("request_id", id)
+            .eq("to_status", "REVISION_REQUESTED")
+            .order("id", { ascending: false })
+            .limit(1)
+        : Promise.resolve({ data: null }),
+    ]);
   const teams = (teamRows ?? []) as TeamRow[];
   const departmentBudget = ((budgetRows ?? []) as DepartmentBudgetOverviewRow[])[0];
+  const revisionNote: string | null = isRevision ? (noteRows?.[0]?.note ?? null) : null;
 
   return (
     <>

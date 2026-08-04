@@ -80,30 +80,32 @@ export default async function AdminReviewPage({
   const sp = await searchParams;
   const supabase = await createClient();
 
-  const { data: departments } = await supabase
+  const departmentsQuery = supabase
     .from("departments")
     .select("id, name")
     .eq("dept_type", "SALES")
     .eq("is_active", true)
     .order("id");
 
-  let query = supabase
+  let requestsQuery = supabase
     .from("requests")
     .select(
       "*, applicant:users!requests_applicant_id_fkey!inner(name), department:departments(name)",
     )
     .neq("status", "DRAFT");
-  if (sp.from) query = query.gte("created_at", sp.from);
-  if (sp.to) query = query.lte("created_at", `${sp.to}T23:59:59.999`);
-  if (sp.dept) query = query.eq("department_id", Number(sp.dept));
-  if (sp.applicant?.trim()) query = query.ilike("applicant.name", `%${sp.applicant.trim()}%`);
-  if (sp.status) query = query.eq("status", sp.status);
-  if (sp.category) query = query.eq("category", sp.category);
-  if (sp.client?.trim()) query = query.ilike("client_company", `%${sp.client.trim()}%`);
-  if (sp.payFrom) query = query.gte("desired_payment_date", sp.payFrom);
-  if (sp.payTo) query = query.lte("desired_payment_date", sp.payTo);
+  if (sp.from) requestsQuery = requestsQuery.gte("created_at", sp.from);
+  if (sp.to) requestsQuery = requestsQuery.lte("created_at", `${sp.to}T23:59:59.999`);
+  if (sp.dept) requestsQuery = requestsQuery.eq("department_id", Number(sp.dept));
+  if (sp.applicant?.trim())
+    requestsQuery = requestsQuery.ilike("applicant.name", `%${sp.applicant.trim()}%`);
+  if (sp.status) requestsQuery = requestsQuery.eq("status", sp.status);
+  if (sp.category) requestsQuery = requestsQuery.eq("category", sp.category);
+  if (sp.client?.trim()) requestsQuery = requestsQuery.ilike("client_company", `%${sp.client.trim()}%`);
+  if (sp.payFrom) requestsQuery = requestsQuery.gte("desired_payment_date", sp.payFrom);
+  if (sp.payTo) requestsQuery = requestsQuery.lte("desired_payment_date", sp.payTo);
+  requestsQuery = requestsQuery.order("created_at", { ascending: false });
 
-  const { data } = await query.order("created_at", { ascending: false });
+  const [{ data: departments }, { data }] = await Promise.all([departmentsQuery, requestsQuery]);
   const rows = (data ?? []) as unknown as RequestWithNames[];
 
   // 상세 필터에 값이 이미 적용된 경우, 접혀서 안 보이는 채로 필터가 걸려 있으면 안 되므로 펼쳐서 표시

@@ -113,7 +113,8 @@ export async function saveRequest(input: {
     const { data, error } = await query.select("id, request_no");
     if (error) {
       console.error("saveRequest update failed:", error);
-      return { error: "저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
+      // P0001 = DB 트리거가 raise exception한 업무 규칙 위반 (예: 팀 예산 초과) — 메시지를 그대로 보여준다
+      return { error: error.code === "P0001" ? error.message : "저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
     }
     if (!data || data.length === 0) {
       return {
@@ -136,7 +137,7 @@ export async function saveRequest(input: {
       .single();
     if (error) {
       console.error("saveRequest insert failed:", error);
-      return { error: "저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
+      return { error: error.code === "P0001" ? error.message : "저장하지 못했습니다. 잠시 후 다시 시도해 주세요." };
     }
     requestId = data.id;
     requestNo = data.request_no;

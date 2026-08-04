@@ -1,8 +1,6 @@
 import { redirect } from "next/navigation";
 import PageHeader from "@/components/layout/PageHeader";
-import DepartmentBudgetOverview, {
-  type DepartmentBudgetOverviewRow,
-} from "@/components/requests/DepartmentBudgetOverview";
+import type { DepartmentBudgetOverviewRow } from "@/components/requests/DepartmentBudgetOverview";
 import RequestForm from "@/components/requests/RequestForm";
 import type { TeamBudgetOverviewRow } from "@/components/requests/TeamBudgetOverview";
 import { getProfile } from "@/lib/auth";
@@ -27,6 +25,7 @@ export default async function NewRequestPage() {
     supabase.rpc("team_budget_overview", { p_year: currentYear }),
   ]);
   const teams = (teamRows ?? []) as TeamRow[];
+  const departmentBudget = ((budgetRows ?? []) as DepartmentBudgetOverviewRow[])[0];
 
   return (
     <>
@@ -34,17 +33,12 @@ export default async function NewRequestPage() {
         title="신규 신청"
         description="대외경조비 신청서를 작성합니다. 제출 후 경영지원팀 검토가 진행됩니다."
       />
-      <div className="mb-6 max-w-2xl">
-        <DepartmentBudgetOverview
-          rows={(budgetRows ?? []) as DepartmentBudgetOverviewRow[]}
-          year={currentYear}
-          myDepartmentId={profile.departmentId}
-        />
-      </div>
       <RequestForm
         initial={EMPTY_VALUES}
         teams={teams}
         teamBudgets={(teamBudgetRows ?? []) as TeamBudgetOverviewRow[]}
+        departmentBudget={departmentBudget}
+        year={currentYear}
         divisionName={profile.departmentName}
       />
     </>

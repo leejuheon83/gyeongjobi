@@ -1,8 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import PageHeader from "@/components/layout/PageHeader";
-import DepartmentBudgetOverview, {
-  type DepartmentBudgetOverviewRow,
-} from "@/components/requests/DepartmentBudgetOverview";
+import type { DepartmentBudgetOverviewRow } from "@/components/requests/DepartmentBudgetOverview";
 import RequestForm from "@/components/requests/RequestForm";
 import type { TeamBudgetOverviewRow } from "@/components/requests/TeamBudgetOverview";
 import { getProfile } from "@/lib/auth";
@@ -66,6 +64,7 @@ export default async function EditRequestPage({
     supabase.rpc("team_budget_overview", { p_year: currentYear }),
   ]);
   const teams = (teamRows ?? []) as TeamRow[];
+  const departmentBudget = ((budgetRows ?? []) as DepartmentBudgetOverviewRow[])[0];
 
   return (
     <>
@@ -79,13 +78,6 @@ export default async function EditRequestPage({
               : `${request.request_no} · 임시저장 상태의 신청서를 이어서 작성합니다.`
         }
       />
-      <div className="mb-6 max-w-2xl">
-        <DepartmentBudgetOverview
-          rows={(budgetRows ?? []) as DepartmentBudgetOverviewRow[]}
-          year={currentYear}
-          myDepartmentId={profile.departmentId}
-        />
-      </div>
       <RequestForm
         requestId={request.id}
         updatedAt={request.updated_at}
@@ -101,6 +93,8 @@ export default async function EditRequestPage({
         }
         teams={teams}
         teamBudgets={(teamBudgetRows ?? []) as TeamBudgetOverviewRow[]}
+        departmentBudget={departmentBudget}
+        year={currentYear}
         divisionName={profile.departmentName}
         inFlightEdit={inFlightEdit}
       />

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { createDraftForAttachment, saveRequest } from "@/app/(main)/requests/actions";
 import AttachmentSection from "@/components/requests/AttachmentSection";
+import type { DepartmentBudgetOverviewRow } from "@/components/requests/DepartmentBudgetOverview";
 import type { TeamBudgetOverviewRow } from "@/components/requests/TeamBudgetOverview";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
@@ -38,6 +39,8 @@ interface RequestFormProps {
   revisionNote?: string;
   teams: TeamRow[];
   teamBudgets?: TeamBudgetOverviewRow[];
+  departmentBudget?: DepartmentBudgetOverviewRow;
+  year: number;
   divisionName: string;
   // true면 임시저장 버튼을 숨기고 "제출 후 수정 불가" 경고도 표시하지 않는다.
   // 이미 제출·검토중·재제출 상태인 신청서를 상태 변경 없이 내용만 저장하는 경우에 사용.
@@ -61,12 +64,21 @@ export default function RequestForm({
   revisionNote,
   teams,
   teamBudgets = [],
+  departmentBudget,
+  year,
   divisionName,
   inFlightEdit = false,
 }: RequestFormProps) {
   const router = useRouter();
   const [values, setValues] = useState<RequestFormValues>(initial ?? EMPTY_VALUES);
   const selectedTeamBudget = teamBudgets.find((t) => String(t.team_id) === values.team_id);
+  const budgetLabel = selectedTeamBudget?.team_name ?? departmentBudget?.department_name ?? divisionName;
+  const budgetRow = selectedTeamBudget ?? departmentBudget;
+  const budgetRate =
+    budgetRow && budgetRow.budget_amount > 0
+      ? Math.round((budgetRow.committed_amount / budgetRow.budget_amount) * 100)
+      : 0;
+  const budgetOver = (budgetRow?.remaining_amount ?? 0) < 0;
   const [currentRequestId, setCurrentRequestId] = useState<string | undefined>(requestId);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -149,6 +161,67 @@ export default function RequestForm({
         </div>
       )}
 
+      {budgetRow && (
+        <Card title={`${budgetLabel} 예산 현황 (${year}년)`}>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-max text-sm">
+              <thead>
+                <tr className="border-b border-slate-200 text-left">
+                  <th className="px-3 py-2.5 font-medium whitespace-nowrap text-slate-500">
+                    {selectedTeamBudget ? "팀" : "영업국"}
+                  </th>
+                  <th className="px-3 py-2.5 text-right font-medium whitespace-nowrap text-slate-500">
+                    예산
+                  </th>
+                  <th className="px-3 py-2.5 text-right font-medium whitespace-nowrap text-slate-500">
+                    사용 금액
+                  </th>
+                  <th className="px-3 py-2.5 text-right font-medium whitespace-nowrap text-slate-500">
+                    잔액
+                  </th>
+                  <th className="px-3 py-2.5 font-medium whitespace-nowrap text-slate-500">집행률</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="px-3 py-3 text-slate-700">{budgetLabel}</td>
+                  <td className="px-3 py-3 text-right text-slate-700">
+                    {formatKRW(budgetRow.budget_amount)}
+                  </td>
+                  <td className="px-3 py-3 text-right text-slate-700">
+                    {formatKRW(budgetRow.committed_amount)}
+                  </td>
+                  <td
+                    className={`px-3 py-3 text-right ${budgetOver ? "font-medium text-red-600" : "text-slate-700"}`}
+                  >
+                    {formatKRW(budgetRow.remaining_amount)}
+                  </td>
+                  <td className="px-3 py-3">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-20 overflow-hidden rounded-full bg-slate-100">
+                        <div
+                          className={`h-full rounded-full ${budgetOver ? "bg-red-500" : budgetRate >= 80 ? "bg-amber-500" : "bg-brand-sky"}`}
+                          style={{ width: `${Math.min(budgetRate, 100)}%` }}
+                        />
+                      </div>
+                      <span
+                        className={`text-xs ${budgetOver ? "font-medium text-red-600" : "text-slate-500"}`}
+                      >
+                        {budgetRate}%
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 text-xs text-slate-400">
+            사용 금액은 승인·지급완료 건의 승인 금액 합계 기준이며, 실제 처리 결과에 따라 달라질 수
+            있습니다.
+          </p>
+        </Card>
+      )}
+
       <Card title="신청 팀">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Select
@@ -169,19 +242,6 @@ export default function RequestForm({
             ))}
           </Select>
         </div>
-        {selectedTeamBudget && (
-          <p className="mt-3 text-xs text-slate-500">
-            {selectedTeamBudget.team_name} 배분 예산 {formatKRW(selectedTeamBudget.budget_amount)} ·
-            사용 예정 {formatKRW(selectedTeamBudget.committed_amount)} ·{" "}
-            <span
-              className={
-                selectedTeamBudget.remaining_amount < 0 ? "font-medium text-red-600" : "font-medium"
-              }
-            >
-              잔액 {formatKRW(selectedTeamBudget.remaining_amount)}
-            </span>
-          </p>
-        )}
       </Card>
 
       <Card title="대상자 정보">

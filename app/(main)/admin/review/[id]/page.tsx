@@ -72,7 +72,7 @@ const relatedColumns: Column<RelatedRequest>[] = [
   },
   { key: "applicant", header: "신청자", render: (r) => r.applicant?.name ?? "-" },
   { key: "category", header: "구분", render: (r) => categoryLabel(r.category) },
-  { key: "event_date", header: "행사일", render: (r) => r.event_date ?? "-" },
+  { key: "event_date", header: "경조 발생일", render: (r) => r.event_date ?? "-" },
   {
     key: "amount",
     header: "금액",
@@ -189,7 +189,7 @@ export default async function AdminReviewDetailPage({
           <div className="rounded-md border border-red-300 bg-red-50 px-4 py-3">
             <p className="text-sm font-semibold text-red-800">중복 신청 가능성</p>
             <p className="mt-1 text-sm text-red-700">
-              동일 대상자·동일 행사일({request.event_date})의 다른 신청이{" "}
+              동일 대상자·동일 경조 발생일({request.event_date})의 다른 신청이{" "}
               {duplicates.length}건 있습니다:{" "}
               {duplicates.map((d, i) => (
                 <span key={d.id}>
@@ -226,8 +226,7 @@ export default async function AdminReviewDetailPage({
             <Field label="신청자와의 관계" value={request.relationship ?? "-"} />
             <Field label="거래처명" value={request.client_company ?? "-"} />
             <Field label="경조 구분" value={categoryLabel(request.category)} />
-            <Field label="경조 발생일" value={request.occurrence_date ?? "-"} />
-            <Field label="행사일" value={request.event_date ?? "-"} />
+            <Field label="경조 발생일" value={request.event_date ?? "-"} />
             <Field label="장소" value={request.location ?? "-"} />
           </dl>
           <div className="mt-4 space-y-4 border-t border-slate-100 pt-4">

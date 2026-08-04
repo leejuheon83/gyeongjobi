@@ -10,7 +10,6 @@ export interface RequestFormValues {
   relationship: string;
   client_company: string;
   sales_rep_name: string;
-  occurrence_date: string;
   event_date: string;
   location: string;
   reason: string;
@@ -29,7 +28,6 @@ export const EMPTY_VALUES: RequestFormValues = {
   relationship: "",
   client_company: "",
   sales_rep_name: "",
-  occurrence_date: "",
   event_date: "",
   location: "",
   reason: "",
@@ -55,7 +53,6 @@ export function toFormValues(r: RequestRow): RequestFormValues {
     relationship: r.relationship ?? "",
     client_company: r.client_company ?? "",
     sales_rep_name: r.sales_rep_name ?? "",
-    occurrence_date: r.occurrence_date ?? "",
     event_date: r.event_date ?? "",
     location: r.location ?? "",
     reason: r.reason ?? "",
@@ -80,7 +77,8 @@ export function toRequestFields(values: RequestFormValues) {
     relationship: t(values.relationship),
     client_company: t(values.client_company),
     sales_rep_name: t(values.sales_rep_name),
-    occurrence_date: t(values.occurrence_date),
+    // 별도 입력을 받지 않고 행사일을 그대로 사용한다 (두 필드가 실질적으로 중복이라 UI에서 통합)
+    occurrence_date: t(values.event_date),
     event_date: t(values.event_date),
     location: t(values.location),
     reason: t(values.reason),
@@ -105,8 +103,7 @@ const SUBMIT_REQUIRED: { key: keyof RequestFormValues; label: string }[] = [
   { key: "target_name", label: "대상자명" },
   { key: "relationship", label: "신청자와의 관계" },
   { key: "client_company", label: "거래처명" },
-  { key: "occurrence_date", label: "경조 발생일" },
-  { key: "event_date", label: "행사일" },
+  { key: "event_date", label: "경조 발생일" },
   { key: "reason", label: "신청 사유" },
   { key: "business_relevance", label: "업무 연관성" },
   { key: "payment_method", label: "지급 형태" },

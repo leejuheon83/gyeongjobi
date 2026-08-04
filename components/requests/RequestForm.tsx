@@ -247,6 +247,12 @@ export default function RequestForm({
       <Card title="대상자 정보">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Input
+            id="sales_rep_name"
+            label="담당 영업사원(신청자)"
+            value={values.sales_rep_name}
+            onChange={(e) => set("sales_rep_name", e.target.value)}
+          />
+          <Input
             id="target_name"
             label="대상자명"
             requiredMark
@@ -276,12 +282,6 @@ export default function RequestForm({
             onChange={(e) => set("client_company", e.target.value)}
             error={fieldErrors.client_company}
           />
-          <Input
-            id="sales_rep_name"
-            label="담당 영업사원(신청자)"
-            value={values.sales_rep_name}
-            onChange={(e) => set("sales_rep_name", e.target.value)}
-          />
         </div>
       </Card>
 
@@ -305,18 +305,9 @@ export default function RequestForm({
             ))}
           </Select>
           <Input
-            id="occurrence_date"
-            type="date"
-            label="경조 발생일"
-            requiredMark
-            value={values.occurrence_date}
-            onChange={(e) => set("occurrence_date", e.target.value)}
-            error={fieldErrors.occurrence_date}
-          />
-          <Input
             id="event_date"
             type="date"
-            label="행사일"
+            label="경조 발생일"
             requiredMark
             value={values.event_date}
             onChange={(e) => set("event_date", e.target.value)}
@@ -475,7 +466,7 @@ export default function RequestForm({
                 <dd className="font-medium text-slate-900">{values.target_name}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">행사일</dt>
+                <dt className="text-slate-500">경조 발생일</dt>
                 <dd className="font-medium text-slate-900">{values.event_date}</dd>
               </div>
               <div className="flex justify-between">

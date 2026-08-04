@@ -191,18 +191,9 @@ export default function AdminEditRequestForm({
             ))}
           </Select>
           <Input
-            id="occurrence_date"
-            type="date"
-            label="경조 발생일"
-            requiredMark
-            value={values.occurrence_date}
-            onChange={(e) => set("occurrence_date", e.target.value)}
-            error={fieldErrors.occurrence_date}
-          />
-          <Input
             id="event_date"
             type="date"
-            label="행사일"
+            label="경조 발생일"
             requiredMark
             value={values.event_date}
             onChange={(e) => set("event_date", e.target.value)}

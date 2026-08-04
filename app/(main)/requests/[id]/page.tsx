@@ -147,8 +147,7 @@ export default async function RequestDetailPage({
         <Card title="경조 정보">
           <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Field label="경조 구분" value={categoryLabel(request.category)} />
-            <Field label="경조 발생일" value={request.occurrence_date ?? "-"} />
-            <Field label="행사일" value={request.event_date ?? "-"} />
+            <Field label="경조 발생일" value={request.event_date ?? "-"} />
             <Field label="장소" value={request.location ?? "-"} />
           </dl>
           <div className="mt-4 space-y-4 border-t border-slate-100 pt-4">

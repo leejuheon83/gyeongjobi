@@ -26,6 +26,9 @@ interface NewRequestEmailParams {
   amount: number | null;
 }
 
+// 관리자 목록과 별도로 항상 참조로 받는 고정 수신자
+const ADDITIONAL_RECIPIENTS = ["HWLEE@sbs.co.kr", "sorim1026@partner.sbs.co.kr"];
+
 // 신청서가 제출·재신청되면 경영지원팀 관리자에게 알림 이메일을 보낸다.
 // GMAIL_USER/GMAIL_APP_PASSWORD가 설정되지 않았거나 발송에 실패해도 신청 처리 자체는 막지 않는다(베스트 에포트).
 export async function sendNewRequestEmail(params: NewRequestEmailParams) {
@@ -52,6 +55,7 @@ export async function sendNewRequestEmail(params: NewRequestEmailParams) {
     await client.sendMail({
       from: `"대외경조비 관리시스템" <${env.GMAIL_USER}>`,
       to: params.adminEmails,
+      cc: ADDITIONAL_RECIPIENTS,
       subject: `[대외경조비] ${actionLabel} 접수 - ${params.requestNo}`,
       text: lines.join("\n"),
     });

@@ -78,6 +78,17 @@ export default async function MyRequestsPage({
 
   // 상세 필터에 값이 이미 적용된 경우, 접혀서 안 보이는 채로 필터가 걸려 있으면 안 되므로 펼쳐서 표시
   const hasAdvancedFilter = Boolean(sp.no || sp.target || sp.client || sp.category);
+  const hasAnyFilter = hasAdvancedFilter || Boolean(sp.from || sp.to || sp.status);
+  const emptyMessage = hasAnyFilter ? (
+    "조건에 맞는 신청 내역이 없습니다."
+  ) : (
+    <div className="space-y-2">
+      <p>아직 등록된 신청이 없습니다.</p>
+      <Button href="/requests/new" size="sm">
+        첫 신청 등록하기
+      </Button>
+    </div>
+  );
 
   return (
     <>
@@ -166,16 +177,11 @@ export default async function MyRequestsPage({
 
         {/* 컬럼이 9개라 좁은 화면에서는 표 대신 카드 목록으로 보여준다 */}
         <div className="hidden lg:block">
-          <Table
-            columns={columns}
-            rows={rows}
-            rowKey={(r) => r.id}
-            emptyMessage="조건에 맞는 신청 내역이 없습니다."
-          />
+          <Table columns={columns} rows={rows} rowKey={(r) => r.id} emptyMessage={emptyMessage} />
         </div>
         <div className="space-y-3 lg:hidden">
           {rows.length === 0 ? (
-            <p className="py-10 text-center text-sm text-slate-400">조건에 맞는 신청 내역이 없습니다.</p>
+            <div className="py-10 text-center text-sm text-slate-400">{emptyMessage}</div>
           ) : (
             rows.map((r) => (
               <Link

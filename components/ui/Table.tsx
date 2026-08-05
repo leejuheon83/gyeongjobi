@@ -11,7 +11,7 @@ interface TableProps<T> {
   columns: Column<T>[];
   rows: T[];
   rowKey: (row: T) => string;
-  emptyMessage?: string;
+  emptyMessage?: ReactNode;
 }
 
 export default function Table<T>({

@@ -147,82 +147,62 @@ export default function RequestForm({
   }
 
   return (
-    <div className="max-w-2xl space-y-6">
-      {savedNotice && (
-        <p className="rounded-md bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          저장되었습니다. 이어서 작성하거나 나중에 다시 불러올 수 있습니다.
-        </p>
-      )}
-
-      {revisionNote && (
-        <div className="rounded-md border border-orange-300 bg-orange-50 px-4 py-3">
-          <p className="text-sm font-semibold text-orange-800">보완 요청 내용</p>
-          <p className="mt-1 text-sm whitespace-pre-wrap text-slate-800">{revisionNote}</p>
+    <div className="mx-auto max-w-5xl lg:grid lg:grid-cols-[1fr_320px] lg:items-start lg:gap-6">
+      {budgetRow && (
+        <div className="mb-6 lg:order-2 lg:sticky lg:top-6 lg:mb-0">
+          <Card title={`${budgetLabel} 예산 현황 (${year}년)`}>
+            <dl className="space-y-3 text-sm">
+              <div className="flex items-center justify-between">
+                <dt className="text-slate-500">예산</dt>
+                <dd className="font-medium text-slate-900">{formatKRW(budgetRow.budget_amount)}</dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-slate-500">사용 금액</dt>
+                <dd className="font-medium text-slate-900">{formatKRW(budgetRow.committed_amount)}</dd>
+              </div>
+              <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+                <dt className="text-slate-500">잔액</dt>
+                <dd className={`font-semibold ${budgetOver ? "text-red-600" : "text-slate-900"}`}>
+                  {formatKRW(budgetRow.remaining_amount)}
+                </dd>
+              </div>
+            </dl>
+            <div className="mt-4">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className={`h-full rounded-full ${budgetOver ? "bg-red-500" : budgetRate >= 80 ? "bg-amber-500" : "bg-brand-sky"}`}
+                  style={{ width: `${Math.min(budgetRate, 100)}%` }}
+                />
+              </div>
+              <p
+                className={`mt-1.5 text-right text-xs ${budgetOver ? "font-medium text-red-600" : "text-slate-500"}`}
+              >
+                집행률 {budgetRate}%{budgetOver && " 초과"}
+              </p>
+            </div>
+            <p className="mt-3 text-xs text-slate-400">
+              사용 금액은 승인·지급완료 건의 승인 금액 합계 기준이며, 실제 처리 결과에 따라 달라질 수
+              있습니다.
+            </p>
+          </Card>
         </div>
       )}
 
-      {budgetRow && (
-        <Card title={`${budgetLabel} 예산 현황 (${year}년)`}>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-max text-sm">
-              <thead>
-                <tr className="border-b border-slate-200 text-left">
-                  <th className="px-3 py-2.5 font-medium whitespace-nowrap text-slate-500">
-                    {selectedTeamBudget ? "팀" : "영업국"}
-                  </th>
-                  <th className="px-3 py-2.5 text-right font-medium whitespace-nowrap text-slate-500">
-                    예산
-                  </th>
-                  <th className="px-3 py-2.5 text-right font-medium whitespace-nowrap text-slate-500">
-                    사용 금액
-                  </th>
-                  <th className="px-3 py-2.5 text-right font-medium whitespace-nowrap text-slate-500">
-                    잔액
-                  </th>
-                  <th className="px-3 py-2.5 font-medium whitespace-nowrap text-slate-500">집행률</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="px-3 py-3 text-slate-700">{budgetLabel}</td>
-                  <td className="px-3 py-3 text-right text-slate-700">
-                    {formatKRW(budgetRow.budget_amount)}
-                  </td>
-                  <td className="px-3 py-3 text-right text-slate-700">
-                    {formatKRW(budgetRow.committed_amount)}
-                  </td>
-                  <td
-                    className={`px-3 py-3 text-right ${budgetOver ? "font-medium text-red-600" : "text-slate-700"}`}
-                  >
-                    {formatKRW(budgetRow.remaining_amount)}
-                  </td>
-                  <td className="px-3 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-20 overflow-hidden rounded-full bg-slate-100">
-                        <div
-                          className={`h-full rounded-full ${budgetOver ? "bg-red-500" : budgetRate >= 80 ? "bg-amber-500" : "bg-brand-sky"}`}
-                          style={{ width: `${Math.min(budgetRate, 100)}%` }}
-                        />
-                      </div>
-                      <span
-                        className={`text-xs ${budgetOver ? "font-medium text-red-600" : "text-slate-500"}`}
-                      >
-                        {budgetRate}%
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-3 text-xs text-slate-400">
-            사용 금액은 승인·지급완료 건의 승인 금액 합계 기준이며, 실제 처리 결과에 따라 달라질 수
-            있습니다.
+      <div className="space-y-6 lg:order-1">
+        {savedNotice && (
+          <p className="rounded-md bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            저장되었습니다. 이어서 작성하거나 나중에 다시 불러올 수 있습니다.
           </p>
-        </Card>
-      )}
+        )}
 
-      <Card title="신청 팀">
+        {revisionNote && (
+          <div className="rounded-md border border-orange-300 bg-orange-50 px-4 py-3">
+            <p className="text-sm font-semibold text-orange-800">보완 요청 내용</p>
+            <p className="mt-1 text-sm whitespace-pre-wrap text-slate-800">{revisionNote}</p>
+          </div>
+        )}
+
+        <Card title="신청 팀">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Select
             id="team_id"
@@ -491,6 +471,7 @@ export default function RequestForm({
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

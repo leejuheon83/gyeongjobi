@@ -106,7 +106,19 @@ export default async function DashboardPage() {
           </Link>
         }
       >
-        <Table columns={columns} rows={requests.slice(0, 5)} rowKey={(r) => r.id} />
+        <Table
+          columns={columns}
+          rows={requests.slice(0, 5)}
+          rowKey={(r) => r.id}
+          emptyMessage={
+            <div className="space-y-2">
+              <p>아직 등록된 신청이 없습니다.</p>
+              <Button href="/requests/new" size="sm">
+                첫 신청 등록하기
+              </Button>
+            </div>
+          }
+        />
       </Card>
     </>
   );

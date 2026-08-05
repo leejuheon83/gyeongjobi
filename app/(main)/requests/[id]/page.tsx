@@ -53,10 +53,13 @@ function TextBlock({ label, value }: { label: string; value: string | null }) {
 
 export default async function RequestDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ submitted?: string }>;
 }) {
   const { id } = await params;
+  const { submitted } = await searchParams;
   const profile = await getProfile();
   const supabase = await createClient();
 
@@ -120,6 +123,12 @@ export default async function RequestDetailPage({
       />
 
       <div className="space-y-6">
+        {submitted === "1" && isOwner && (
+          <p className="rounded-md bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            신청서가 정상적으로 제출되었습니다. 경영지원팀 검토 결과는 알림으로 안내됩니다.
+          </p>
+        )}
+
         {request.status === "REVISION_REQUESTED" && (
           <Card title="보완 요청 내용" className="border-orange-300 bg-orange-50/50">
             <p className="text-sm whitespace-pre-wrap text-slate-800">

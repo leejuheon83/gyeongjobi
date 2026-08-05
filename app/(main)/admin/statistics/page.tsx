@@ -90,6 +90,11 @@ export default async function StatisticsPage({
   const avgDays = averageProcessingDays(rows);
   const history = (historyData ?? []) as unknown as DownloadHistoryRow[];
 
+  // 상세 필터에 값이 이미 적용된 경우, 접혀서 안 보이는 채로 필터가 걸려 있으면 안 되므로 펼쳐서 표시
+  const hasAdvancedFilter = Boolean(
+    sp.dept || sp.applicant || sp.category || sp.client || sp.payFrom || sp.payTo,
+  );
+
   return (
     <>
       <PageHeader
@@ -103,73 +108,83 @@ export default async function StatisticsPage({
       />
 
       <Card className="mb-6">
-        <form method="get" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Input id="from" name="from" type="date" label="신청 기간 (시작)" defaultValue={sp.from ?? ""} />
-          <Input id="to" name="to" type="date" label="신청 기간 (종료)" defaultValue={sp.to ?? ""} />
-          <Select id="dept" name="dept" label="영업국" defaultValue={sp.dept ?? ""}>
-            <option value="">전체</option>
-            {(departments ?? []).map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}
-              </option>
-            ))}
-          </Select>
-          <Input
-            id="applicant"
-            name="applicant"
-            label="신청자"
-            placeholder="이름 검색"
-            defaultValue={sp.applicant ?? ""}
-          />
-          <Select id="status" name="status" label="신청 상태" defaultValue={sp.status ?? ""}>
-            <option value="">전체</option>
-            {Object.entries(STATUS_LABEL)
-              .filter(([value]) => value !== "DRAFT")
-              .map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-          </Select>
-          <Select id="category" name="category" label="경조 구분" defaultValue={sp.category ?? ""}>
-            <option value="">전체</option>
-            {Object.entries(CATEGORY_LABEL).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </Select>
-          <Input
-            id="client"
-            name="client"
-            label="거래처명"
-            placeholder="거래처명 검색"
-            defaultValue={sp.client ?? ""}
-          />
-          <div className="grid grid-cols-2 gap-2">
-            <Input
-              id="payFrom"
-              name="payFrom"
-              type="date"
-              label="지급 희망일 (시작)"
-              defaultValue={sp.payFrom ?? ""}
-            />
-            <Input
-              id="payTo"
-              name="payTo"
-              type="date"
-              label="지급 희망일 (종료)"
-              defaultValue={sp.payTo ?? ""}
-            />
+        <form method="get" className="space-y-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Input id="from" name="from" type="date" label="신청 기간 (시작)" defaultValue={sp.from ?? ""} />
+            <Input id="to" name="to" type="date" label="신청 기간 (종료)" defaultValue={sp.to ?? ""} />
+            <Select id="status" name="status" label="신청 상태" defaultValue={sp.status ?? ""}>
+              <option value="">전체</option>
+              {Object.entries(STATUS_LABEL)
+                .filter(([value]) => value !== "DRAFT")
+                .map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+            </Select>
+            <div className="flex items-end gap-2">
+              <Button type="submit" className="flex-1">
+                검색
+              </Button>
+              <Button variant="secondary" href="/admin/statistics">
+                초기화
+              </Button>
+            </div>
           </div>
-          <div className="flex items-end gap-2 lg:col-start-4">
-            <Button type="submit" className="flex-1">
-              검색
-            </Button>
-            <Button variant="secondary" href="/admin/statistics">
-              초기화
-            </Button>
-          </div>
+
+          <details open={hasAdvancedFilter}>
+            <summary className="cursor-pointer text-sm font-medium text-brand-navy select-none">
+              상세 필터 (영업국·신청자·경조 구분·거래처명·지급 희망일)
+            </summary>
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <Select id="dept" name="dept" label="영업국" defaultValue={sp.dept ?? ""}>
+                <option value="">전체</option>
+                {(departments ?? []).map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </Select>
+              <Input
+                id="applicant"
+                name="applicant"
+                label="신청자"
+                placeholder="이름 검색"
+                defaultValue={sp.applicant ?? ""}
+              />
+              <Select id="category" name="category" label="경조 구분" defaultValue={sp.category ?? ""}>
+                <option value="">전체</option>
+                {Object.entries(CATEGORY_LABEL).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </Select>
+              <Input
+                id="client"
+                name="client"
+                label="거래처명"
+                placeholder="거래처명 검색"
+                defaultValue={sp.client ?? ""}
+              />
+              <div className="grid grid-cols-2 gap-2">
+                <Input
+                  id="payFrom"
+                  name="payFrom"
+                  type="date"
+                  label="지급 희망일 (시작)"
+                  defaultValue={sp.payFrom ?? ""}
+                />
+                <Input
+                  id="payTo"
+                  name="payTo"
+                  type="date"
+                  label="지급 희망일 (종료)"
+                  defaultValue={sp.payTo ?? ""}
+                />
+              </div>
+            </div>
+          </details>
         </form>
       </Card>
 

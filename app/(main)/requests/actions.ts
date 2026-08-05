@@ -163,7 +163,7 @@ export async function saveRequest(input: {
   }
 
   if (mode === "submit") {
-    redirect(`/requests/${requestId}`);
+    redirect(`/requests/${requestId}${inFlightNoTransition ? "" : "?submitted=1"}`);
   }
   redirect(`/requests/${requestId}/edit?saved=1`);
 }

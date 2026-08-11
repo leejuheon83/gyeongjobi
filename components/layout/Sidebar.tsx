@@ -82,7 +82,7 @@ function MenuLinks({
   const activeHref = findActiveHref(groups, pathname);
 
   return (
-    <nav className="space-y-6 overflow-y-auto px-3 py-4">
+    <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-4">
       {groups.map((group) => (
         <div key={group.title}>
           <p className="px-3 pb-2 text-xs font-semibold tracking-wide text-slate-400 uppercase">
@@ -117,7 +117,7 @@ function MenuLinks({
 
 function SupportIllustration() {
   return (
-    <div className="min-h-0 flex-1 px-4 pb-2">
+    <div className="shrink-0 px-4 pb-2">
       <Image
         src="/support-illustration.png"
         alt="경영지원팀이 안내드립니다. 궁금한 사항은 담당자에게 문의 부탁드립니다."

@@ -82,7 +82,7 @@ function MenuLinks({
   const activeHref = findActiveHref(groups, pathname);
 
   return (
-    <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-4">
+    <nav className="space-y-6 overflow-y-auto px-3 py-4">
       {groups.map((group) => (
         <div key={group.title}>
           <p className="px-3 pb-2 text-xs font-semibold tracking-wide text-slate-400 uppercase">
@@ -112,6 +112,20 @@ function MenuLinks({
         </div>
       ))}
     </nav>
+  );
+}
+
+function SupportIllustration() {
+  return (
+    <div className="min-h-0 flex-1 px-4 pb-2">
+      <Image
+        src="/support-illustration.png"
+        alt="경영지원팀이 안내드립니다. 궁금한 사항은 담당자에게 문의 부탁드립니다."
+        width={500}
+        height={750}
+        className="mx-auto h-auto w-full max-w-[172px]"
+      />
+    </div>
   );
 }
 
@@ -148,7 +162,7 @@ export default function Sidebar({
   return (
     <>
       {/* 데스크톱 사이드바 */}
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-slate-200 bg-white lg:flex">
+      <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col border-r border-slate-200 bg-white lg:flex">
         <div className="h-1 shrink-0 bg-gradient-to-r from-brand-sky via-brand-sky to-brand-gold" />
         <div className="flex h-20 items-center justify-between gap-3 border-b border-slate-200 px-5">
           <Link
@@ -168,6 +182,7 @@ export default function Sidebar({
           <NotificationBell notifications={notifications} align="left" />
         </div>
         <MenuLinks groups={groups} />
+        <SupportIllustration />
         <SidebarFooter user={user} />
       </aside>
 
@@ -246,6 +261,7 @@ export default function Sidebar({
               </button>
             </div>
             <MenuLinks groups={groups} onNavigate={() => setOpen(false)} />
+            <SupportIllustration />
             <SidebarFooter user={user} />
           </aside>
         </div>

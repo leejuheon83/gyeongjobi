@@ -118,6 +118,20 @@ export default function RequestForm({
     }
   }
 
+  // 화환·기타는 금액을 직접 입력하지 않으므로 0원으로 고정하고 입력칸을 잠근다
+  function setPaymentMethod(method: string) {
+    setValues((prev) => ({
+      ...prev,
+      payment_method: method,
+      amount: allowsZeroAmount(method)
+        ? "0"
+        : allowsZeroAmount(prev.payment_method)
+          ? ""
+          : prev.amount,
+    }));
+    setFieldErrors((prev) => ({ ...prev, payment_method: undefined, amount: undefined }));
+  }
+
   function runSave(mode: "draft" | "submit") {
     setServerError(null);
     startTransition(async () => {
@@ -334,6 +348,7 @@ export default function RequestForm({
             placeholder="50,000"
             value={values.amount}
             onChange={(e) => set("amount", formatAmountInput(e.target.value))}
+            disabled={allowsZeroAmount(values.payment_method)}
             error={fieldErrors.amount}
           />
           <Select
@@ -341,7 +356,7 @@ export default function RequestForm({
             label="지급 형태"
             requiredMark
             value={values.payment_method}
-            onChange={(e) => set("payment_method", e.target.value)}
+            onChange={(e) => setPaymentMethod(e.target.value)}
             error={fieldErrors.payment_method}
           >
             <option value="" disabled>
@@ -363,7 +378,7 @@ export default function RequestForm({
         </div>
         {allowsZeroAmount(values.payment_method) && (
           <p className="mt-2 text-xs text-slate-500">
-            화환·기타 지급은 신청 금액을 0원으로 신청할 수 있습니다.
+            화환·기타 지급은 금액을 직접 입력하지 않습니다. 신청 금액이 0원으로 고정됩니다.
           </p>
         )}
         <div className="mt-4">

@@ -8,7 +8,12 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Input, { Select, Textarea } from "@/components/ui/Input";
 import { formatKRW } from "@/lib/format";
-import { formatAmountInput, validateRequest, type RequestFormValues } from "@/lib/request-form";
+import {
+  allowsZeroAmount,
+  formatAmountInput,
+  validateRequest,
+  type RequestFormValues,
+} from "@/lib/request-form";
 import { useEscapeKey } from "@/lib/use-escape-key";
 import { CATEGORY_LABEL, PAYMENT_METHOD_LABEL, type EventCategory, type PaymentMethod, type TeamRow } from "@/lib/types";
 
@@ -54,6 +59,20 @@ export default function AdminEditRequestForm({
     if (fieldErrors[key]) {
       setFieldErrors((prev) => ({ ...prev, [key]: undefined }));
     }
+  }
+
+  // 화환·기타는 금액을 직접 입력하지 않으므로 0원으로 고정하고 입력칸을 잠근다
+  function setPaymentMethod(method: string) {
+    setValues((prev) => ({
+      ...prev,
+      payment_method: method,
+      amount: allowsZeroAmount(method)
+        ? "0"
+        : allowsZeroAmount(prev.payment_method)
+          ? ""
+          : prev.amount,
+    }));
+    setFieldErrors((prev) => ({ ...prev, payment_method: undefined, amount: undefined }));
   }
 
   function onSaveClick() {
@@ -235,6 +254,7 @@ export default function AdminEditRequestForm({
             inputMode="numeric"
             value={values.amount}
             onChange={(e) => set("amount", formatAmountInput(e.target.value))}
+            disabled={allowsZeroAmount(values.payment_method)}
             error={fieldErrors.amount}
           />
           <Select
@@ -242,7 +262,7 @@ export default function AdminEditRequestForm({
             label="지급 형태"
             requiredMark
             value={values.payment_method}
-            onChange={(e) => set("payment_method", e.target.value)}
+            onChange={(e) => setPaymentMethod(e.target.value)}
             error={fieldErrors.payment_method}
           >
             <option value="" disabled>

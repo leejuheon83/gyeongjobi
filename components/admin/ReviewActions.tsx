@@ -11,12 +11,13 @@ import Input, { Textarea } from "@/components/ui/Input";
 import { formatAmountInput, parseAmount } from "@/lib/request-form";
 import { formatKRW } from "@/lib/format";
 import { useEscapeKey } from "@/lib/use-escape-key";
-import type { RequestStatus } from "@/lib/types";
+import { PAYMENT_METHOD_LABEL, type PaymentMethod, type RequestStatus } from "@/lib/types";
 
 interface ReviewActionsProps {
   requestId: string;
   status: RequestStatus;
   requestedAmount: number | null;
+  paymentMethod: PaymentMethod | null;
   expectedUpdatedAt: string;
 }
 
@@ -60,6 +61,7 @@ export default function ReviewActions({
   requestId,
   status,
   requestedAmount,
+  paymentMethod,
   expectedUpdatedAt,
 }: ReviewActionsProps) {
   const router = useRouter();
@@ -196,12 +198,20 @@ export default function ReviewActions({
             <div className="mt-4 space-y-4">
               {action === "APPROVE" && (
                 <>
-                  <p className="rounded-md bg-slate-50 px-3 py-2 text-sm text-slate-600">
-                    신청 금액:{" "}
-                    <span className="font-medium text-slate-900">
-                      {requestedAmount != null ? formatKRW(requestedAmount) : "-"}
-                    </span>
-                  </p>
+                  <dl className="grid grid-cols-2 gap-2">
+                    <div className="rounded-md border border-brand-sky/30 bg-brand-sky/5 px-3 py-2">
+                      <dt className="text-xs font-medium text-brand-navy">신청 금액</dt>
+                      <dd className="mt-0.5 text-base font-bold text-brand-navy">
+                        {requestedAmount != null ? formatKRW(requestedAmount) : "-"}
+                      </dd>
+                    </div>
+                    <div className="rounded-md border border-brand-sky/30 bg-brand-sky/5 px-3 py-2">
+                      <dt className="text-xs font-medium text-brand-navy">지급 형태</dt>
+                      <dd className="mt-0.5 text-base font-bold text-brand-navy">
+                        {paymentMethod ? PAYMENT_METHOD_LABEL[paymentMethod] : "-"}
+                      </dd>
+                    </div>
+                  </dl>
                   <Input
                     id="approved_amount"
                     label="승인 금액 (원)"

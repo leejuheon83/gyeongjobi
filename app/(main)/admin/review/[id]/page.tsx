@@ -51,6 +51,16 @@ function Field({ label, value }: { label: string; value: string }) {
   );
 }
 
+// 관리자가 가장 먼저 확인해야 하는 값(신청 금액·지급 형태)은 눈에 띄게 강조한다
+function HighlightField({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border border-brand-sky/30 bg-brand-sky/5 px-3 py-2">
+      <dt className="text-xs font-medium text-brand-navy">{label}</dt>
+      <dd className="mt-0.5 text-lg font-bold text-brand-navy">{value}</dd>
+    </div>
+  );
+}
+
 function TextBlock({ label, value }: { label: string; value: string | null }) {
   return (
     <div>
@@ -208,6 +218,7 @@ export default async function AdminReviewDetailPage({
             requestId={request.id}
             status={request.status}
             requestedAmount={request.requested_amount}
+            paymentMethod={request.payment_method}
             expectedUpdatedAt={request.updated_at}
           />
         </Card>
@@ -240,17 +251,17 @@ export default async function AdminReviewDetailPage({
 
         <Card title="금액·지급 정보">
           <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Field
+            <HighlightField
               label="신청 금액"
               value={request.requested_amount != null ? formatKRW(request.requested_amount) : "-"}
+            />
+            <HighlightField
+              label="지급 형태"
+              value={request.payment_method ? PAYMENT_METHOD_LABEL[request.payment_method] : "-"}
             />
             <Field
               label="승인 금액"
               value={request.approved_amount != null ? formatKRW(request.approved_amount) : "-"}
-            />
-            <Field
-              label="지급 형태"
-              value={request.payment_method ? PAYMENT_METHOD_LABEL[request.payment_method] : "-"}
             />
             <Field label="지급 희망일" value={request.desired_payment_date ?? "-"} />
           </dl>

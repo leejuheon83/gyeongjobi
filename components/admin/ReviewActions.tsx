@@ -74,12 +74,10 @@ export default function ReviewActions({
 
   useEscapeKey(action !== null && !pending, () => setAction(null));
 
-  const available: ReviewAction[] =
-    status === "SUBMITTED" || status === "RESUBMITTED"
-      ? ["START_REVIEW"]
-      : status === "REVIEWING"
-        ? ["APPROVE", "REQUEST_REVISION", "REJECT"]
-        : [];
+  // 제출된 건은 별도의 "검토 시작" 단계 없이 바로 승인·보완 요청·반려를 진행한다
+  const available: ReviewAction[] = ["SUBMITTED", "RESUBMITTED", "REVIEWING"].includes(status)
+    ? ["APPROVE", "REQUEST_REVISION", "REJECT"]
+    : [];
 
   // 취소는 이미 취소된 건을 제외한 모든 상태에서 가능 (지급완료 건 포함)
   const canCancel = status !== "CANCELLED";
@@ -165,12 +163,6 @@ export default function ReviewActions({
           ))}
         </div>
       )}
-      {(status === "SUBMITTED" || status === "RESUBMITTED") && (
-        <p className="mt-2 text-xs text-slate-400">
-          승인·보완 요청·반려는 검토 시작 후 진행할 수 있습니다.
-        </p>
-      )}
-
       {canCancel && (
         <div className={available.length > 0 ? "mt-4 border-t border-slate-100 pt-4" : ""}>
           <Button variant="secondary" onClick={() => open("CANCEL")} disabled={pending}>

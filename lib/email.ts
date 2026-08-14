@@ -27,7 +27,11 @@ interface NewRequestEmailParams {
 }
 
 // 관리자 목록과 별도로 항상 참조로 받는 고정 수신자
-const ADDITIONAL_RECIPIENTS = ["HWLEE@sbs.co.kr", "sorim1026@partner.sbs.co.kr"];
+const ADDITIONAL_RECIPIENTS = [
+  "HWLEE@sbs.co.kr",
+  "sorim1026@partner.sbs.co.kr",
+  "hy1022@partner.sbs.co.kr",
+];
 
 // 신청서가 제출·재신청되면 경영지원팀 관리자에게 알림 이메일을 보낸다.
 // GMAIL_USER/GMAIL_APP_PASSWORD가 설정되지 않았거나 발송에 실패해도 신청 처리 자체는 막지 않는다(베스트 에포트).

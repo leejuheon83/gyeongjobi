@@ -95,7 +95,9 @@ export default function ReviewActions({
   function validate(a: ReviewAction): string | null {
     if (a === "APPROVE") {
       const amount = parseAmount(approvedAmount);
-      if (amount === null || amount <= 0) return "승인 금액을 입력해 주세요.";
+      if (amount === null || amount < 0) return "승인 금액을 입력해 주세요.";
+      // 화환 등 신청 금액이 0원인 건만 0원 승인을 허용한다
+      if (amount === 0 && requestedAmount !== 0) return "승인 금액은 0보다 큰 값이어야 합니다.";
       if (requestedAmount != null && amount > requestedAmount) {
         return "승인 금액은 신청 금액을 초과할 수 없습니다.";
       }

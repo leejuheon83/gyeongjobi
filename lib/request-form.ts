@@ -97,6 +97,13 @@ export function formatAmountInput(value: string): string {
 
 export const MAX_AMOUNT = 100_000;
 
+// 화환·기타는 현금 지급이 아니라 물품/별도 처리라 신청 금액이 0원일 수 있다
+const ZERO_AMOUNT_METHODS = ["WREATH", "OTHER"];
+
+export function allowsZeroAmount(paymentMethod: string): boolean {
+  return ZERO_AMOUNT_METHODS.includes(paymentMethod);
+}
+
 const SUBMIT_REQUIRED: { key: keyof RequestFormValues; label: string }[] = [
   { key: "team_id", label: "신청 팀" },
   { key: "category", label: "경조 구분" },
@@ -120,8 +127,9 @@ export function validateRequest(
   }
 
   const amount = parseAmount(values.amount);
+  const zeroAllowed = allowsZeroAmount(values.payment_method);
   if (values.amount.trim() && amount !== null) {
-    if (amount <= 0) {
+    if (amount <= 0 && !zeroAllowed) {
       errors.amount = "신청 금액은 0보다 커야 합니다.";
     } else if (amount > MAX_AMOUNT) {
       errors.amount = `신청 금액은 ${MAX_AMOUNT.toLocaleString("ko-KR")}원을 초과할 수 없습니다.`;
@@ -134,8 +142,14 @@ export function validateRequest(
         errors[key] = `${label}을(를) 입력해 주세요.`;
       }
     }
-    if (!errors.amount && (amount === null || amount <= 0)) {
-      errors.amount = "신청 금액은 0보다 큰 값이어야 합니다.";
+    if (!errors.amount) {
+      if (amount === null) {
+        errors.amount = zeroAllowed
+          ? "신청 금액을 입력해 주세요. 금액이 없으면 0을 입력합니다."
+          : "신청 금액은 0보다 큰 값이어야 합니다.";
+      } else if (amount <= 0 && !zeroAllowed) {
+        errors.amount = "신청 금액은 0보다 큰 값이어야 합니다.";
+      }
     }
   }
 

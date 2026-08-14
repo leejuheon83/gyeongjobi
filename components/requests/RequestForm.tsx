@@ -11,6 +11,7 @@ import Card from "@/components/ui/Card";
 import Input, { Select, Textarea } from "@/components/ui/Input";
 import { formatKRW } from "@/lib/format";
 import {
+  allowsZeroAmount,
   EMPTY_VALUES,
   formatAmountInput,
   validateRequest,
@@ -360,6 +361,11 @@ export default function RequestForm({
             onChange={(e) => set("desired_payment_date", e.target.value)}
           />
         </div>
+        {allowsZeroAmount(values.payment_method) && (
+          <p className="mt-2 text-xs text-slate-500">
+            화환·기타 지급은 신청 금액을 0원으로 신청할 수 있습니다.
+          </p>
+        )}
         <div className="mt-4">
           <Textarea
             id="special_request"

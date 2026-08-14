@@ -59,7 +59,11 @@ export default function PaymentForm({
   const reasonLabel = mode === "correct" ? "변경 사유" : "금액 차이 사유";
 
   function validate(): string | null {
-    if (amountValue === null || amountValue <= 0) return "실제 지급 금액을 입력해 주세요.";
+    if (amountValue === null || amountValue < 0) return "실제 지급 금액을 입력해 주세요.";
+    // 화환 등 승인 금액이 0원인 건만 0원 지급을 허용한다
+    if (amountValue === 0 && approvedAmount !== 0) {
+      return "실제 지급 금액은 0보다 큰 값이어야 합니다.";
+    }
     if (!paidAt) return "지급일을 입력해 주세요.";
     if (reasonRequired && !reasonText.trim()) {
       return mode === "correct"

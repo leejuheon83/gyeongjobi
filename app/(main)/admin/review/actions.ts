@@ -40,8 +40,12 @@ export async function processRequest(input: ProcessInput): Promise<{ error?: str
 
   if (input.action === "APPROVE") {
     approvedAmount = parseAmount(input.approvedAmount ?? "");
-    if (approvedAmount === null || approvedAmount <= 0) {
+    if (approvedAmount === null || approvedAmount < 0) {
       return { error: "승인 금액을 입력해 주세요." };
+    }
+    // 화환 등 신청 금액이 0원인 건만 0원 승인을 허용한다
+    if (approvedAmount === 0 && input.requestedAmount !== 0) {
+      return { error: "승인 금액은 0보다 큰 값이어야 합니다." };
     }
     if (input.requestedAmount != null && approvedAmount > input.requestedAmount) {
       return { error: "승인 금액은 신청 금액을 초과할 수 없습니다." };

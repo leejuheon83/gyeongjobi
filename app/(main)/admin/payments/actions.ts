@@ -28,9 +28,13 @@ export async function completePayment(
     return { error: "관리자만 지급 처리를 할 수 있습니다." };
   }
 
+  // 화환 등 승인 금액이 0원인 건은 0원 지급 처리를 허용한다
   const paidAmount = parseAmount(input.paidAmount);
-  if (paidAmount === null || paidAmount <= 0) {
+  if (paidAmount === null || paidAmount < 0) {
     return { error: "실제 지급 금액을 입력해 주세요." };
+  }
+  if (paidAmount === 0 && input.approvedAmount !== 0) {
+    return { error: "실제 지급 금액은 0보다 큰 값이어야 합니다." };
   }
   if (!input.paidAt) {
     return { error: "지급일을 입력해 주세요." };
@@ -74,7 +78,7 @@ export async function correctPayment(
   }
 
   const paidAmount = parseAmount(input.paidAmount);
-  if (paidAmount === null || paidAmount <= 0) {
+  if (paidAmount === null || paidAmount < 0) {
     return { error: "실제 지급 금액을 입력해 주세요." };
   }
   if (!input.paidAt) {

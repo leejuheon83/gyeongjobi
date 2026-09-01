@@ -18,6 +18,15 @@ export const EXTENSION_MIME: Record<string, string> = {
   png: "image/png",
 };
 
+// 다운로드 응답에 그대로 실어도 되는 MIME.
+// attachments.mime_type은 REST API로 직접 조작할 여지가 있으므로, text/html 같은 값이
+// 브라우저에서 실행되지 않도록 서빙 시점에 허용 목록으로 다시 거른다.
+const SERVEABLE_MIME = new Set(Object.values(EXTENSION_MIME));
+
+export function safeContentType(mimeType: string | null): string {
+  return mimeType && SERVEABLE_MIME.has(mimeType) ? mimeType : "application/octet-stream";
+}
+
 export function fileExtension(name: string): string {
   const i = name.lastIndexOf(".");
   return i >= 0 ? name.slice(i + 1).toLowerCase() : "";

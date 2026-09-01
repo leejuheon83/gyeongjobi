@@ -1,3 +1,4 @@
+import { safeContentType } from "@/lib/attachment-config";
 import { createClient } from "@/lib/supabase/server";
 
 // 파일 다운로드/미리보기 중계.
@@ -29,7 +30,7 @@ export async function GET(
 
   return new Response(blob, {
     headers: {
-      "Content-Type": attachment.mime_type ?? "application/octet-stream",
+      "Content-Type": safeContentType(attachment.mime_type),
       "Content-Disposition": `inline; filename*=UTF-8''${encodeURIComponent(attachment.file_name)}`,
       "Cache-Control": "private, no-store",
       "X-Content-Type-Options": "nosniff",
